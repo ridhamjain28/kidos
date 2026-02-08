@@ -41,8 +41,13 @@ const App: React.FC = () => {
     <>
         {!welcomeComplete && <WelcomeAnimation onComplete={handleWelcomeComplete} />}
         <DebugHUD />
+        {/* Global Background for High-End Feel */}
+        <div className="fixed inset-0 bg-[#F0FDFA] -z-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-teal-50 via-teal-50/50 to-transparent"></div>
+        
         <Layout currentView={currentView} onNavigate={setCurrentView}>
-          {renderView()}
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
+             {renderView()}
+          </div>
         </Layout>
         {welcomeComplete && <FloatingBuddy currentView={currentView} />}
     </>

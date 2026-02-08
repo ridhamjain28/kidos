@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>KidOS – WonderFeed | Kids' Learning &amp; Discovery</title>
     <meta name="description" content="A safe, AI-powered learning app for kids: facts, stories, LearnTV, creative games, and Professor Hoot. Explore, learn, dream." />
-    <meta name="theme-color" content="#f0f9ff" />
+    <meta name="theme-color" content="#F0FDFA" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="WonderFeed" />
@@ -24,10 +24,35 @@
     <link rel="manifest" href="/manifest.json" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Comic+Neue:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Comic Neue"', 'cursive', 'sans-serif'],
+              display: ['"Baloo 2"', 'cursive', 'serif'],
+              serif: ['"Baloo 2"', 'cursive', 'serif'],
+            },
+            colors: {
+              primary: '#0D9488',
+              secondary: '#2DD4BF',
+              cta: '#EA580C',
+              background: '#F0FDFA',
+              text: '#134E4A',
+            },
+            boxShadow: {
+              'clay': '8px 8px 16px #c4cfcc, -8px -8px 16px #ffffff',
+              'clay-sm': '4px 4px 8px #c4cfcc, -4px -4px 8px #ffffff',
+              'clay-inset': 'inset 4px 4px 8px #c4cfcc, inset -4px -4px 8px #ffffff',
+              'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+            }
+          }
+        }
+      }
+    </script>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Nunito:wght@400;700&display=swap');
-
       :root {
         --safe-top: env(safe-area-inset-top, 0);
         --safe-bottom: env(safe-area-inset-bottom, 0);
@@ -37,20 +62,24 @@
 
       html {
         scroll-behavior: smooth;
+        height: 100%;
       }
 
       body {
-        font-family: 'Nunito', sans-serif;
-        background-color: #f0f9ff;
-        min-height: 100vh;
-        min-height: 100dvh;
+        font-family: 'Comic Neue', cursive, sans-serif;
+        background-color: #F0FDFA;
+        min-height: 100%;
         padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        color: #134E4A;
+        /* Ensure scrolling works */
+        overflow-x: hidden;
+        overflow-y: auto;
       }
 
-      h1, h2, h3, h4, button {
-        font-family: 'Fredoka', sans-serif;
+      h1, h2, h3, h4, button, .font-display {
+        font-family: 'Baloo 2', cursive, sans-serif;
       }
 
       .no-scrollbar::-webkit-scrollbar {
@@ -68,7 +97,7 @@
         }
       }
       * {
-        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.08);
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
       }
       button, [role="button"], a {
         touch-action: manipulation;

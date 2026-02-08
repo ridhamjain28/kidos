@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { generateFunFact, generateLibrary, generateStory, generateImage, promptForKey } from '../services/gemini';
 import { FeedItem, ParentSettings, Book, Story, ImageSize } from '../types';
@@ -144,76 +143,88 @@ export const Feed: React.FC = () => {
   }
 
   return (
-    <div className="h-full bg-slate-50 flex flex-col overflow-hidden font-sans">
+    <div className="flex flex-col font-sans w-full min-h-full">
       {/* IBLM mood banner (spec §3.2 adaptation) */}
       {contentMode === 'CALMING_ESCAPE' && (
         <div className="bg-gradient-to-r from-violet-100 to-indigo-100 border-b border-violet-200 px-4 py-2 flex items-center gap-2 shrink-0">
           <span className="text-2xl">🫧</span>
-          <span className="text-sm font-bold text-violet-800">Calm mode — take a breath, then try something gentle.</span>
+          <span className="text-sm font-bold text-violet-800 font-display">Calm mode — take a breath.</span>
         </div>
       )}
       {contentMode === 'SHORT_BURST' && (
         <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center gap-2 shrink-0">
           <span className="text-2xl">⚡</span>
-          <span className="text-sm font-bold text-amber-800">Quick facts mode — short and fun!</span>
+          <span className="text-sm font-bold text-amber-800 font-display">Quick facts mode!</span>
         </div>
       )}
-      {/* Tab Switcher – always visible, doesn’t overlap FloatingBuddy, responsive */}
-      <div className="bg-white p-2 sm:p-3 shadow-sm z-20 shrink-0 sticky top-0 flex items-center gap-2 px-2 sm:px-4">
-          <button
-            type="button"
-            onClick={() => setActiveTab('FACTS')}
-            className={`flex-1 min-w-0 flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-3 min-h-[44px] rounded-full font-bold text-sm sm:text-base transition-all active:scale-95 sm:px-5 ${activeTab === 'FACTS' ? 'bg-blue-500 text-white shadow-md' : 'text-slate-400 hover:bg-slate-100 active:bg-slate-200'}`}
-          >
-              <SparklesIcon className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
-              <span className="truncate">Daily Facts</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab('LIBRARY')}
-            className={`flex-1 min-w-0 flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-3 min-h-[44px] rounded-full font-bold text-sm sm:text-base transition-all active:scale-95 sm:px-5 ${activeTab === 'LIBRARY' ? 'bg-yellow-400 text-black shadow-md' : 'text-slate-400 hover:bg-slate-100 active:bg-slate-200'}`}
-          >
-              <BookIcon className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
-              <span className="truncate">Library</span>
-          </button>
+      
+      {/* Tab Switcher – Claymorphism */}
+      <div className="p-3 sm:p-4 z-20 shrink-0 sticky top-0 bg-background/95 backdrop-blur-sm">
+        <div className="bg-white/50 p-1.5 rounded-3xl shadow-clay-inset flex items-center gap-2 max-w-md mx-auto">
+           <button
+             type="button"
+             onClick={() => setActiveTab('FACTS')}
+             className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl font-bold font-display text-base transition-all duration-300 ${
+                activeTab === 'FACTS' 
+                ? 'bg-primary text-white shadow-clay scale-[1.02]' 
+                : 'text-slate-400 hover:text-slate-600 hover:bg-white/40'
+             }`}
+           >
+               <SparklesIcon className="w-5 h-5 shrink-0" />
+               <span className="truncate">Daily Facts</span>
+           </button>
+           <button
+             type="button"
+             onClick={() => setActiveTab('LIBRARY')}
+             className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl font-bold font-display text-base transition-all duration-300 ${
+                activeTab === 'LIBRARY' 
+                ? 'bg-cta text-white shadow-clay scale-[1.02]' 
+                : 'text-slate-400 hover:text-slate-600 hover:bg-white/40'
+             }`}
+           >
+               <BookIcon className="w-5 h-5 shrink-0" />
+               <span className="truncate">Library</span>
+           </button>
+        </div>
       </div>
 
-      {/* Content Area – extra bottom padding for nav + safe area */}
-      <div className="flex-1 overflow-y-auto no-scrollbar pb-24 sm:pb-24 relative bg-slate-50">
+      {/* Content Area */}
+      <div className="flex-1 overflow-y-auto no-scrollbar relative pb-8">
         
         {activeTab === 'FACTS' && (
-            <div className="snap-y snap-mandatory h-full overflow-y-auto">
+            <div className="flex flex-col gap-6 px-4 pb-24">
                 {items.map((item) => (
-                    <div key={item.id} className="h-full min-h-[70vh] w-full p-3 sm:p-4 md:p-6 snap-start flex items-center justify-center">
-                    <div className="relative w-full max-w-md mx-auto h-[85%] min-h-[280px] sm:min-h-[320px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl bg-black">
-                        <img 
-                        src={item.imageUrl} 
-                        alt={item.topic} 
-                        className="absolute inset-0 w-full h-full object-cover opacity-80"
-                        />
-                        <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-8 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
-                        <span className="inline-block px-3 py-1.5 bg-yellow-400 text-black font-bold rounded-full text-xs mb-2 sm:mb-3">
-                            {item.topic}
-                        </span>
-                        <p className="text-white text-xl sm:text-2xl md:text-3xl font-black font-sans leading-tight shadow-black drop-shadow-md">
-                            {item.fact}
-                        </p>
+                    <div key={item.id} className="w-full max-w-lg mx-auto bg-white rounded-[32px] overflow-hidden shadow-clay transform transition hover:scale-[1.01]">
+                        <div className="relative aspect-[4/5] sm:aspect-[4/3] w-full">
+                            <img 
+                                src={item.imageUrl} 
+                                alt={item.topic} 
+                                className="absolute inset-0 w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
+                                <span className="inline-block px-4 py-1.5 bg-secondary text-white font-black font-display rounded-full text-xs uppercase tracking-wider mb-2 shadow-sm border-2 border-white/20">
+                                    {item.topic}
+                                </span>
+                                <p className="text-white text-2xl sm:text-3xl font-black font-display leading-tight drop-shadow-md">
+                                    {item.fact}
+                                </p>
+                            </div>
                         </div>
-                    </div>
                     </div>
                 ))}
                 
-                <div className="h-40 flex items-center justify-center snap-start">
+                <div className="flex justify-center py-8">
                     {loadingFacts ? (
-                        <div className="animate-bounce flex flex-col items-center gap-2 text-blue-500">
-                            <SparklesIcon className="w-8 h-8" />
-                            <span className="font-bold">Loading tailored content...</span>
+                        <div className="animate-bounce flex flex-col items-center gap-2 text-primary">
+                            <SparklesIcon className="w-10 h-10" />
+                            <span className="font-bold font-display text-lg">Finding cool facts...</span>
                         </div>
                     ) : (
                         <button
                             type="button"
                             onClick={() => loadFeed(settings)}
-                            className="min-h-[48px] px-8 py-3.5 bg-blue-500 hover:bg-blue-600 text-white rounded-full font-bold shadow-lg transform transition active:scale-95"
+                            className="px-8 py-4 bg-white text-primary rounded-full font-black font-display text-lg shadow-clay hover:scale-105 active:scale-95 transition-all border-2 border-primary/10"
                         >
                             Load More Facts!
                         </button>
@@ -223,35 +234,37 @@ export const Feed: React.FC = () => {
         )}
 
         {activeTab === 'LIBRARY' && (
-            <div className="p-4 md:p-6 pb-8">
-                <div className="mb-4 sm:mb-6">
-                    <h2 className="text-xl sm:text-2xl font-black text-slate-800 mb-1 sm:mb-2 font-serif">Reading Time! 📚</h2>
-                    <p className="text-sm sm:text-base text-slate-500">Pick a book to start a magical adventure.</p>
+            <div className="px-4 pb-24">
+                <div className="mb-6 text-center sm:text-left max-w-6xl mx-auto">
+                    <h2 className="text-3xl font-black text-text mb-2 font-display">Reading Time! 📚</h2>
+                    <p className="text-slate-500 font-medium">Pick a book to start a magical adventure.</p>
                 </div>
 
                 {loadingLibrary && books.length === 0 ? (
-                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                        {[1,2,3,4].map(i => <div key={i} className="aspect-[3/4] bg-slate-200 rounded-2xl animate-pulse" />)}
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-6xl mx-auto">
+                        {[1,2,3,4,5,6].map(i => (
+                            <div key={i} className="aspect-[3/4] bg-white rounded-3xl animate-pulse shadow-clay-sm" />
+                        ))}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 max-w-6xl mx-auto">
                         {books.map((book) => (
                             <button
                                 type="button"
                                 key={book.id}
                                 onClick={() => openBook(book)}
-                                className={`aspect-[3/4] rounded-2xl p-3 sm:p-4 flex flex-col justify-between shadow-lg cursor-pointer transform hover:scale-[1.02] active:scale-[0.98] transition-all text-left ${book.color} text-white relative overflow-hidden group min-h-0`}
+                                className={`aspect-[3/4] rounded-3xl p-5 flex flex-col justify-between shadow-clay hover:shadow-xl transform hover:-translate-y-1 active:scale-[0.98] transition-all text-left ${book.color} text-white relative overflow-hidden group`}
                             >
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full -mr-12 -mt-12 blur-xl"></div>
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full -mr-12 -mt-12 blur-2xl"></div>
                                 
-                                <div className="relative z-10">
-                                    <div className="text-5xl mb-4 drop-shadow-sm transform group-hover:scale-110 transition-transform">{book.emoji}</div>
-                                    <h3 className="font-black text-xl md:text-2xl leading-tight mb-2 shadow-black drop-shadow-md font-serif">{book.title}</h3>
-                                    <p className="text-xs font-bold opacity-90 line-clamp-2">{book.description}</p>
+                                <div className="relative z-10 w-full">
+                                    <div className="text-6xl mb-4 transform group-hover:scale-110 transition-transform filter drop-shadow-lg">{book.emoji}</div>
+                                    <h3 className="font-black text-2xl leading-none mb-2 font-display drop-shadow-md">{book.title}</h3>
+                                    <p className="text-sm font-bold opacity-90 line-clamp-2 leading-snug">{book.description}</p>
                                 </div>
                                 <div className="flex justify-end mt-2">
-                                    <div className="px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-full flex items-center gap-1 font-bold text-xs">
-                                        <span>Read</span> <BookIcon className="w-3 h-3" />
+                                    <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center font-bold text-white shadow-sm group-hover:bg-white group-hover:text-primary transition-colors">
+                                        <PlayIcon className="w-5 h-5 ml-0.5" />
                                     </div>
                                 </div>
                             </button>
@@ -264,7 +277,7 @@ export const Feed: React.FC = () => {
 
       {/* --- IMMERSIVE BOOK READER --- */}
       {activeBook && (
-          <div className="fixed inset-0 z-[100] bg-[#2d1b0e] flex items-center justify-center p-0 md:p-8 overflow-hidden">
+          <div className="fixed inset-0 z-[100] bg-[#2d1b0e] flex items-center justify-center p-0 md:p-8 overflow-hidden animate-in fade-in duration-300">
               {/* Background Wood Texture/Table */}
               <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/wood-pattern.png')] opacity-20 pointer-events-none"></div>
 
@@ -272,21 +285,21 @@ export const Feed: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActiveBook(null)}
-                className="absolute z-50 min-w-[48px] min-h-[48px] w-12 h-12 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center transition-colors backdrop-blur-md active:scale-95 right-4 top-4"
+                className="absolute z-50 w-14 h-14 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center transition-colors backdrop-blur-md active:scale-95 right-4 top-4"
                 style={{ top: 'max(1rem, env(safe-area-inset-top))' }}
               >
-                  <XIcon className="w-6 h-6" />
+                  <XIcon className="w-8 h-8" />
               </button>
 
-              <div className="relative w-full h-[100dvh] md:h-[85vh] md:aspect-[1.5/1] max-w-6xl md:rounded-[20px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex transition-all duration-500 perspective-1000 bg-[#fdfbf7] overflow-hidden">
+              <div className="relative w-full h-[100dvh] md:h-[85vh] md:aspect-[1.5/1] max-w-6xl md:rounded-[40px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex transition-all duration-500 perspective-1000 bg-[#fdfbf7] overflow-hidden">
                   
                   {/* --- LOADING STATE --- */}
                   {storyLoading && (
                       <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#fdfbf7] text-center p-8">
-                          <div className="text-8xl animate-bounce mb-8">{activeBook.emoji}</div>
-                          <h2 className="text-3xl font-serif font-bold text-slate-800 mb-2">Printing "{activeBook.title}"...</h2>
-                          <div className="w-48 h-2 bg-slate-200 rounded-full overflow-hidden mt-4">
-                              <div className="h-full bg-orange-400 animate-progress"></div>
+                          <div className="text-9xl animate-bounce mb-8">{activeBook.emoji}</div>
+                          <h2 className="text-4xl font-display font-black text-slate-800 mb-2">Printing "{activeBook.title}"...</h2>
+                          <div className="w-64 h-4 bg-slate-100 rounded-full overflow-hidden mt-8 shadow-inner">
+                              <div className="h-full bg-cta animate-progress rounded-full"></div>
                           </div>
                       </div>
                   )}
@@ -306,23 +319,27 @@ export const Feed: React.FC = () => {
                                       )}
                                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                                       <div className="absolute bottom-12 left-8 right-8 text-white">
-                                          <h1 className="text-5xl md:text-6xl font-serif font-black leading-tight mb-4 drop-shadow-lg text-yellow-100">{currentStory.title}</h1>
-                                          <p className="text-lg italic opacity-90 text-orange-100">A magical story for you</p>
+                                          <h1 className="text-5xl md:text-7xl font-display font-black leading-[0.9] mb-4 drop-shadow-xl text-yellow-100">{currentStory.title}</h1>
+                                          <p className="text-2xl font-handwriting opacity-90 text-orange-100">A magical story for you</p>
                                       </div>
                                   </div>
                                   
                                   {/* Cover Actions */}
-                                  <div className="h-24 md:h-full md:w-80 bg-[#fdfbf7] md:border-l-4 md:border-orange-950/20 flex md:flex-col items-center justify-between md:justify-center p-6 shrink-0 z-10 shadow-2xl">
-                                       <div className="hidden md:block text-center mb-8">
-                                           <div className="text-6xl mb-4">{activeBook.emoji}</div>
-                                           <p className="font-serif text-slate-500 italic">WonderFeed Library</p>
+                                  <div className="h-32 md:h-full md:w-96 bg-[#fdfbf7] md:border-l-4 md:border-orange-950/20 flex md:flex-col items-center justify-center p-6 shrink-0 z-10 shadow-2xl relative">
+                                       {/* Paper texture on sidebar */}
+                                       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cream-paper.png')] opacity-50 pointer-events-none"></div>
+                                       
+                                       <div className="hidden md:block text-center mb-12 relative z-10">
+                                           <div className="text-8xl mb-6 filter drop-shadow-md">{activeBook.emoji}</div>
+                                           <p className="font-display font-bold text-slate-400 uppercase tracking-widest text-sm">WonderFeed Library</p>
                                        </div>
+                                       
                                        <button
                                           type="button"
                                           onClick={handleNextPage}
-                                          className="w-full md:w-auto min-h-[48px] px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-full shadow-lg text-lg sm:text-xl flex items-center justify-center gap-3 transition-transform hover:scale-105 active:scale-95"
+                                          className="w-full md:w-auto min-h-[64px] px-10 py-4 bg-cta hover:bg-orange-600 text-white font-black rounded-3xl shadow-clay text-xl flex items-center justify-center gap-3 transition-transform hover:scale-105 active:scale-95 relative z-10"
                                        >
-                                           <BookIcon className="w-6 h-6" /> Open Book
+                                           <BookIcon className="w-7 h-7" /> Open Book
                                        </button>
                                   </div>
                              </div>
@@ -331,10 +348,10 @@ export const Feed: React.FC = () => {
                             <div className="w-full h-full flex flex-col md:flex-row bg-[#fdfbf7] relative">
                                 
                                 {/* Center Spine (Desktop Only) */}
-                                <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-8 -ml-4 z-20 bg-gradient-to-r from-black/5 via-black/10 to-black/5 rounded-sm pointer-events-none"></div>
+                                <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-12 -ml-6 z-20 bg-gradient-to-r from-stone-900/5 via-stone-900/10 to-stone-900/5 rounded-md pointer-events-none blur-sm"></div>
 
                                 {/* LEFT PAGE: Visuals */}
-                                <div className="flex-1 h-[45%] md:h-full relative overflow-hidden bg-slate-100 md:rounded-l-[20px] md:border-r border-slate-200">
+                                <div className="flex-1 h-[45%] md:h-full relative overflow-hidden bg-slate-100 md:rounded-l-[40px]">
                                      {currentStory.pages[currentPage].imagePrompt ? (
                                          <div className="w-full h-full relative group">
                                              {pageImages[currentPage] ? (
@@ -346,9 +363,9 @@ export const Feed: React.FC = () => {
                                                  </div>
                                              )}
                                              {/* Paper Texture Overlay */}
-                                             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/canvas-orange.png')] opacity-10 mix-blend-multiply pointer-events-none"></div>
+                                             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/canvas-orange.png')] opacity-20 mix-blend-multiply pointer-events-none"></div>
                                              {/* Inner Shadow */}
-                                             <div className="absolute inset-0 shadow-[inset_0_0_40px_rgba(0,0,0,0.1)] pointer-events-none"></div>
+                                             <div className="absolute inset-0 shadow-[inset_0_0_60px_rgba(0,0,0,0.1)] pointer-events-none"></div>
                                          </div>
                                      ) : (
                                          <div className="w-full h-full flex items-center justify-center bg-[#fdfbf7] p-8">
@@ -358,37 +375,38 @@ export const Feed: React.FC = () => {
                                 </div>
 
                                 {/* RIGHT PAGE: Text */}
-                                <div className="flex-1 h-[55%] md:h-full flex flex-col relative md:rounded-r-[20px] bg-[#fdfbf7]">
+                                <div className="flex-1 h-[55%] md:h-full flex flex-col relative md:rounded-r-[40px] bg-[#fdfbf7]">
                                      {/* Paper Texture */}
-                                     <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cream-paper.png')] opacity-40 pointer-events-none"></div>
+                                     <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cream-paper.png')] opacity-60 pointer-events-none"></div>
                                      
                                      {/* Content */}
-                                     <div className="flex-1 p-8 md:p-12 lg:p-16 overflow-y-auto flex flex-col justify-center text-center md:text-left">
-                                         <p className="text-2xl md:text-3xl lg:text-4xl font-serif text-slate-800 leading-relaxed drop-shadow-sm whitespace-pre-wrap">
+                                     <div className="flex-1 p-8 md:p-16 lg:p-20 overflow-y-auto flex flex-col justify-center text-center md:text-left relative z-10">
+                                         <p className="text-2xl md:text-4xl lg:text-5xl font-display font-medium text-slate-800 leading-relaxed drop-shadow-sm whitespace-pre-wrap">
                                              {currentStory.pages[currentPage].text}
                                          </p>
                                      </div>
 
                                      {/* Page Number */}
-                                     <div className="absolute bottom-6 left-0 right-0 text-center text-slate-400 font-serif italic text-sm">
+                                     <div className="absolute bottom-8 left-0 right-0 text-center text-slate-400 font-display font-bold text-sm">
                                          Page {currentPage + 1}
                                      </div>
 
                                      {/* Navigation Controls – mobile-friendly touch targets */}
-                                     <div className="h-20 min-h-[72px] shrink-0 flex items-center justify-between px-4 md:px-12 z-10 relative pb-[env(safe-area-inset-bottom)]">
+                                     <div className="h-24 min-h-[88px] shrink-0 flex items-center justify-between px-6 md:px-12 z-20 relative pb-[max(env(safe-area-inset-bottom),20px)]">
                                           <button
                                             type="button"
                                             onClick={handlePrevPage}
-                                            className="min-w-[48px] min-h-[48px] w-12 h-12 rounded-full border-2 border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-800 hover:border-slate-800 transition-all hover:bg-slate-100 active:scale-95"
+                                            className="w-14 h-14 rounded-full border-2 border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-800 hover:border-slate-800 transition-all hover:bg-slate-100 active:scale-95"
                                           >
-                                              <span className="text-xl">←</span>
+                                              <span className="text-2xl">←</span>
                                           </button>
+                                          {/* Fixed: Use currentStory.pages.length to check for last page */}
                                           <button
                                             type="button"
                                             onClick={handleNextPage}
-                                            className="min-h-[48px] px-6 py-3 sm:px-8 bg-yellow-400 hover:bg-yellow-500 text-black font-bold rounded-xl shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] active:scale-95 transition-all border-2 border-black flex items-center gap-2"
+                                            className="px-8 py-4 bg-secondary hover:bg-teal-400 text-white font-black rounded-2xl shadow-clay hover:shadow-lg hover:-translate-y-1 active:scale-95 transition-all text-xl flex items-center gap-2"
                                           >
-                                              {currentPage === currentStory.pages.length - 1 ? 'Finish' : 'Next'} <span className="text-xl">→</span>
+                                              {currentPage === currentStory.pages.length - 1 ? 'Finish' : 'Next'} <span className="text-2xl">→</span>
                                           </button>
                                      </div>
                                 </div>
