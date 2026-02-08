@@ -4,7 +4,7 @@ import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { ImageSize, LearnVideo, GeneratedVideo, ParentSettings, ActivityLog, Book, Story, View, IBLMMetrics } from "../types";
 
 // Helper to always get a fresh instance with the latest key
-const getAi = () => new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+const getAi = () => new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY || '' });
 
 // Helper to extract mime type
 const getMimeType = (base64: string) => {

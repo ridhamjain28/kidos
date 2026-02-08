@@ -1,7 +1,7 @@
 
 
 import React, { useState, useRef, useEffect } from 'react';
-import { identifyDrawing, getChessAdvice, generateLanguageLesson, checkPronunciation, generateImage, promptForKey } from '../services/gemini';
+import { getLocalChessHint, getLocalLanguageLesson, checkLocalPronunciation, getLocalDrawingPrompt } from '../services/localGames';
 import { PencilIcon, EraserIcon, TrashIcon, DownloadIcon, CircleIcon, SquareIcon, ChessIcon, MathIcon, AbcBlockIcon, SparklesIcon, LightBulbIcon, FillIcon, GamepadIcon, PuzzleIcon, GlobeIcon, VolumeIcon, MicIcon, XIcon, StarIcon } from './Icons';
 import { ImageSize } from '../types';
 
@@ -127,16 +127,12 @@ export const CreativeStudio: React.FC = () => {
   };
 
   // --- Handlers ---
-  const handleIdentifyDrawing = async () => {
+  // --- Handlers ---
+  const handleInspiration = () => {
       playSound('magic');
-      if (!canvasRef.current) return;
       setGuessing(true);
-      setDrawingGuess("");
-      const base64 = canvasRef.current.toDataURL('image/png');
-      try {
-          const guess = await identifyDrawing(base64);
-          setDrawingGuess(guess);
-      } catch(e) { console.error(e); }
+      const prompt = getLocalDrawingPrompt();
+      setDrawingGuess(prompt); // Reusing this state for the prompt text
       setGuessing(false);
   };
 
@@ -303,7 +299,7 @@ export const CreativeStudio: React.FC = () => {
           }
       }, 1000);
   };
-  const getHint = async () => { playSound('click'); setAdviceLoading(true); const rows = board.map(row => row.map(c => c || '.').join(' ')).join('\n'); const advice = await getChessAdvice(rows); setChessAdvice(advice); setAdviceLoading(false); };
+  const getHint = async () => { playSound('click'); setAdviceLoading(true); const advice = getLocalChessHint(board, turn); setChessAdvice(advice); setAdviceLoading(false); };
 
   // --- Math Logic ---
   const generateMathProblem = () => { const a = Math.floor(Math.random()*5)+1; const b = Math.floor(Math.random()*5)+1; const ans = a+b; setMathProblem({a,b,ans,op:'+'}); const opts=new Set([ans]); while(opts.size<4) opts.add(Math.floor(Math.random()*10)+1); setMathOptions(Array.from(opts).sort(()=>Math.random()-.5)); setMathFeedback(''); };
@@ -316,15 +312,18 @@ export const CreativeStudio: React.FC = () => {
   // --- Language Logic ---
   const startLanguageLesson = async () => {
       setLessonLoading(true); setLesson(null); setFeedback(null); setLessonImage(null);
-      try {
-          const l = await generateLanguageLesson(langTarget, 'Easy');
-          setLesson(l);
-          if (l.imagePrompt) {
-              const img = await generateImage(l.imagePrompt, ImageSize.S_1K, 'gemini-2.5-flash-image');
-              setLessonImage(img);
-          }
-          if (l.voiceInstruction) speak(l.voiceInstruction);
-      } catch (e) { console.error(e); }
+      
+      const l = getLocalLanguageLesson(langTarget);
+      setLesson(l);
+      // For local version, we use the imagePrompt as a placeholder or fetch from Unsplash if online, 
+      // but to be safe and "permanent", let's use a reliable placeholder or emoji logic.
+      // Since the user wants "normal code", we'll skip the external API image gen and use a nice color/text card 
+      // or a generic Unsplash URL based on the keyword if mapped.
+      
+      // Using Unsplash source directly for "normal code" approach (no AI generation)
+      setLessonImage(`https://loremflickr.com/800/600/${l.imagePrompt.replace(' ', ',')}?random=${Date.now()}`);
+      
+      if (l.voiceInstruction) speak(l.voiceInstruction);
       setLessonLoading(false);
   };
   
@@ -339,10 +338,10 @@ export const CreativeStudio: React.FC = () => {
           recognitionRef.current.lang = langTarget === 'Spanish' ? 'es-ES' : langTarget === 'French' ? 'fr-FR' : 'en-US';
           recognitionRef.current.onstart = () => setIsListening(true);
           recognitionRef.current.onend = () => setIsListening(false);
-          recognitionRef.current.onresult = async (event: any) => {
+          recognitionRef.current.onresult = (event: any) => {
               const transcript = event.results[0][0].transcript;
               setIsListening(false);
-              const assessment = await checkPronunciation(lesson.phrase, transcript);
+              const assessment = checkLocalPronunciation(lesson.phrase, transcript);
               if (assessment.correct) {
                   playSound('success');
                   setScore(s => s + 50);
@@ -521,7 +520,7 @@ export const CreativeStudio: React.FC = () => {
                              ))}
                          </div>
                          <div className="flex gap-2">
-                            <button onClick={handleIdentifyDrawing} disabled={guessing} className="p-3 bg-yellow-400 text-black rounded-xl font-bold flex gap-2">{guessing ? '...' : <><LightBulbIcon className="w-6 h-6"/> Guess</>}</button>
+                            <button onClick={handleInspiration} disabled={guessing} className="p-3 bg-yellow-400 text-black rounded-xl font-bold flex gap-2">{guessing ? '...' : <><LightBulbIcon className="w-6 h-6"/> Inspire Me</>}</button>
                             <button onClick={clearCanvas} className="p-3 bg-red-100 text-red-500 rounded-xl"><TrashIcon className="w-6 h-6"/></button>
                             <button onClick={() => {if(canvasRef.current){const l=document.createElement('a');l.download='art.png';l.href=canvasRef.current.toDataURL();l.click();}}} className="p-3 bg-green-100 text-green-600 rounded-xl"><DownloadIcon className="w-6 h-6"/></button>
                          </div>
