@@ -47,6 +47,47 @@ const isColor = (piece: string, color: 'white' | 'black') => {
     return color === 'white' ? white.includes(piece) : black.includes(piece);
 };
 
+export const getLocalChessMove = (board: string[][], color: 'white' | 'black'): {from: {r:number, c:number}, to: {r:number, c:number}} | null => {
+    const moves: {from: {r:number, c:number}, to: {r:number, c:number}}[] = [];
+    
+    // Helper to check bounds and capture
+    const isValid = (r: number, c: number) => r >= 0 && r < 8 && c >= 0 && c < 8 && !isColor(board[r][c], color);
+    
+    for(let r=0; r<8; r++) {
+        for(let c=0; c<8; c++) {
+            if(isColor(board[r][c], color)) {
+                // Generate simple moves based on piece type
+                const p = board[r][c];
+                const directions = [];
+                
+                if(p === '♟' || p === '♙') {
+                    const dir = color === 'white' ? -1 : 1;
+                    if(isValid(r+dir, c) && board[r+dir][c] === '') directions.push({r:r+dir, c:c}); // Move
+                    if(isValid(r+dir, c-1) && board[r+dir][c-1] !== '') directions.push({r:r+dir, c:c-1}); // Capture L
+                    if(isValid(r+dir, c+1) && board[r+dir][c+1] !== '') directions.push({r:r+dir, c:c+1}); // Capture R
+                } else {
+                    // For other pieces, just try random 1-step moves for now (Simplified for "KidOS")
+                    // Real chess logic is too heavy, making them "Magical Teleporting Pieces" or simple shufflers
+                    // Let's do King-like moves for everyone to keep it playable but simple
+                    const steps = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+                    steps.forEach(([dr, dc]) => {
+                       if(isValid(r+dr, c+dc)) directions.push({r:r+dr, c:c+dc});
+                    });
+                }
+                
+                directions.forEach(d => moves.push({from: {r, c}, to: d}));
+            }
+        }
+    }
+    
+    if(moves.length === 0) return null;
+    // Prefer captures
+    const captures = moves.filter(m => board[m.to.r][m.to.c] !== '');
+    if(captures.length > 0) return captures[Math.floor(Math.random() * captures.length)];
+    
+    return moves[Math.floor(Math.random() * moves.length)];
+};
+
 
 // --- LANGUAGE LOGIC ---
 

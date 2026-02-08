@@ -62,20 +62,19 @@
 
       html {
         scroll-behavior: smooth;
-        height: 100%;
+        min-height: 100%;
       }
 
       body {
         font-family: 'Comic Neue', cursive, sans-serif;
         background-color: #F0FDFA;
-        min-height: 100%;
+        min-height: 100vh;
         padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         color: #134E4A;
-        /* Ensure scrolling works */
         overflow-x: hidden;
-        overflow-y: auto;
+        /* Let window handle scrolling naturally */
       }
 
       h1, h2, h3, h4, button, .font-display {

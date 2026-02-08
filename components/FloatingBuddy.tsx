@@ -127,7 +127,7 @@ export const FloatingBuddy: React.FC<FloatingBuddyProps> = ({ currentView }) => 
                 className={`fixed z-[100] transition-all duration-700 ease-in-out cursor-pointer touch-manipulation ${
                     isActive
                     ? 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-[2] sm:scale-[3]'
-                    : 'bottom-24 left-4 sm:bottom-auto sm:top-2 sm:left-2 scale-75 origin-top-left hover:scale-90 active:scale-75'
+                    : 'bottom-24 right-4 sm:bottom-8 sm:right-8 scale-75 origin-bottom-right hover:scale-90 active:scale-75'
                 }`}
                 style={!isActive ? { minWidth: 48, minHeight: 48 } : undefined}
                 onClick={!isActive ? toggleActive : undefined}
