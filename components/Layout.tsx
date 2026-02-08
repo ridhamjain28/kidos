@@ -61,7 +61,7 @@ export const Layout: React.FC<LayoutProps> = ({ currentView, onNavigate, childre
       {/* Floating Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none flex justify-center pb-[max(env(safe-area-inset-bottom),16px)] px-4">
         <nav
-          className="pointer-events-auto w-full max-w-lg bg-white/90 backdrop-blur-xl border border-white/50 shadow-clay-sm rounded-3xl flex items-center justify-between px-2 sm:px-6 h-[72px] sm:h-[88px]"
+          className="pointer-events-auto w-full max-w-lg md:max-w-3xl lg:max-w-4xl bg-white/90 backdrop-blur-xl border border-white/50 shadow-clay-sm rounded-3xl flex items-center justify-between px-2 sm:px-8 h-[72px] sm:h-[88px]"
         >
           <NavItem 
             view={View.FEED} 

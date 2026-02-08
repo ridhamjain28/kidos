@@ -192,29 +192,31 @@ export const Feed: React.FC = () => {
       <div className="flex-1 overflow-y-auto no-scrollbar relative pb-8">
         
         {activeTab === 'FACTS' && (
-            <div className="flex flex-col gap-6 px-4 pb-24">
-                {items.map((item) => (
-                    <div key={item.id} className="w-full max-w-lg mx-auto bg-white rounded-[32px] overflow-hidden shadow-clay transform transition hover:scale-[1.01]">
-                        <div className="relative aspect-[4/5] sm:aspect-[4/3] w-full">
-                            <img 
-                                src={item.imageUrl} 
-                                alt={item.topic} 
-                                className="absolute inset-0 w-full h-full object-cover"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
-                                <span className="inline-block px-4 py-1.5 bg-secondary text-white font-black font-display rounded-full text-xs uppercase tracking-wider mb-2 shadow-sm border-2 border-white/20">
-                                    {item.topic}
-                                </span>
-                                <p className="text-white text-2xl sm:text-3xl font-black font-display leading-tight drop-shadow-md">
-                                    {item.fact}
-                                </p>
+            <div className="px-4 pb-24 w-full">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-[1600px] mx-auto">
+                    {items.map((item) => (
+                        <div key={item.id} className="w-full bg-white rounded-[32px] overflow-hidden shadow-clay transform transition hover:scale-[1.02] hover:shadow-xl flex flex-col">
+                            <div className="relative aspect-[4/5] w-full">
+                                <img 
+                                    src={item.imageUrl} 
+                                    alt={item.topic} 
+                                    className="absolute inset-0 w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                                <div className="absolute bottom-0 left-0 right-0 p-6">
+                                    <span className="inline-block px-4 py-1.5 bg-secondary text-white font-black font-display rounded-full text-xs uppercase tracking-wider mb-2 shadow-sm border-2 border-white/20">
+                                        {item.topic}
+                                    </span>
+                                    <p className="text-white text-2xl font-black font-display leading-tight drop-shadow-md line-clamp-4">
+                                        {item.fact}
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
                 
-                <div className="flex justify-center py-8">
+                <div className="flex justify-center py-12">
                     {loadingFacts ? (
                         <div className="animate-bounce flex flex-col items-center gap-2 text-primary">
                             <SparklesIcon className="w-10 h-10" />
