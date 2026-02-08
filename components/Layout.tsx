@@ -54,7 +54,7 @@ export const Layout: React.FC<LayoutProps> = ({ currentView, onNavigate, childre
   return (
     <div className="min-h-[100dvh] w-full flex flex-col bg-transparent font-sans">
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col w-full mx-auto pb-[100px] sm:pb-[120px]">
+      <main className="flex-1 flex flex-col w-full mx-auto pb-[100px] sm:pb-[120px] relative">
          {children}
       </main>
 

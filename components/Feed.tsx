@@ -189,7 +189,7 @@ export const Feed: React.FC = () => {
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 overflow-y-auto no-scrollbar relative pb-8">
+      <div className="flex-1 w-full relative pb-8">
         
         {activeTab === 'FACTS' && (
             <div className="px-4 pb-24 w-full">
