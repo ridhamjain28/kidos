@@ -114,18 +114,19 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete }
 
                 </div>
 
-                {/* --- UI ELEMENTS (Fade out in Phase 1) --- */}
-                <div className={`transition-all duration-500 absolute bottom-20 left-0 right-0 flex flex-col items-center ${phase > 0 ? 'opacity-0 translate-y-10 pointer-events-none' : 'opacity-100 translate-y-0'}`}>
-                    {/* Title Sequence */}
-                    <div className="mb-12">
-                        <h1 className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-white to-indigo-300 mb-2 tracking-tight drop-shadow-lg font-serif">
-                            WonderFeed
-                        </h1>
-                        <p className="text-xl md:text-2xl text-indigo-100 font-medium max-w-lg leading-relaxed drop-shadow-md mx-auto">
-                            Explore. Learn. Dream.
-                        </p>
-                    </div>
+                {/* --- TITLE AT THE TOP --- */}
+                <div className={`transition-all duration-700 absolute top-12 sm:top-20 left-0 right-0 text-center z-50 ${phase > 0 ? 'opacity-0 -translate-y-10 pointer-events-none' : 'opacity-100 translate-y-0'}`}>
+                    <h1 className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-white to-indigo-300 mb-2 tracking-tight drop-shadow-lg font-serif">
+                        WonderFeed
+                    </h1>
+                    <p className="text-xl md:text-2xl text-indigo-100 font-medium max-w-lg leading-relaxed drop-shadow-md mx-auto">
+                        Explore. Learn. Dream.
+                    </p>
+                </div>
 
+                {/* --- UI ELEMENTS (Fade out in Phase 1) --- */}
+                <div className={`transition-all duration-500 absolute bottom-32 sm:bottom-40 left-0 right-0 flex flex-col items-center ${phase > 0 ? 'opacity-0 translate-y-10 pointer-events-none' : 'opacity-100 translate-y-0'}`}>
+                    
                     {/* Start Button – mobile-friendly min touch target */}
                     <button
                         type="button"
