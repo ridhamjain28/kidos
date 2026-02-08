@@ -6,16 +6,67 @@ import { SparklesIcon, BookIcon, XIcon, PlayIcon } from './Icons';
 
 const DEFAULT_TOPICS = ['Dinosaurs', 'Space', 'Ocean', 'Insects', 'Robots', 'Castles', 'Jungle'];
 
+const SEED_FACTS: FeedItem[] = [
+    {
+        id: 'seed-1',
+        title: 'Space',
+        topic: 'Space',
+        fact: "Did you know? One million Earths could fit inside the Sun! It's like a giant beach ball compared to a tiny grain of sand.",
+        imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80'
+    },
+    {
+        id: 'seed-2',
+        title: 'Dinosaurs',
+        topic: 'Dinosaurs',
+        fact: "The T-Rex had teeth the size of bananas! But don't worry, they are all gone now.",
+        imageUrl: 'https://images.unsplash.com/photo-1583144573429-4c54cb432072?auto=format&fit=crop&w=800&q=80'
+    },
+    {
+        id: 'seed-3',
+        title: 'Ocean',
+        topic: 'Ocean',
+        fact: "Octopuses have three hearts! Two pump blood to the gills, and one pumps it to the rest of the body.",
+        imageUrl: 'https://images.unsplash.com/photo-1582967788606-a171f1080ca8?auto=format&fit=crop&w=800&q=80'
+    }
+];
+
+const SEED_BOOKS: Book[] = [
+    {
+        id: 'seed-b-1',
+        title: 'The Magical Forest',
+        emoji: '🌲',
+        description: 'Discover the hidden secrets of the whispering woods.',
+        color: 'bg-green-500',
+        coverImage: 'https://images.unsplash.com/photo-1448375240586-dfd8d395ea6c?auto=format&fit=crop&w=800&q=80'
+    },
+    {
+        id: 'seed-b-2',
+        title: 'Space Explorer',
+        emoji: '🚀',
+        description: 'Blast off on a journey to the stars and beyond!',
+        color: 'bg-indigo-500',
+        coverImage: 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=800&q=80'
+    },
+    {
+        id: 'seed-b-3',
+        title: 'Rusty the Robot',
+        emoji: '🤖',
+        description: 'A friendly robot learns what it means to have a heart.',
+        color: 'bg-blue-500',
+        coverImage: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80'
+    }
+];
+
 export const Feed: React.FC = () => {
   const { contentMode } = useIBLM();
   const [activeTab, setActiveTab] = useState<'FACTS' | 'LIBRARY'>('FACTS');
   
   // Facts State
-  const [items, setItems] = useState<FeedItem[]>([]);
-  const [loadingFacts, setLoadingFacts] = useState(true);
+  const [items, setItems] = useState<FeedItem[]>(SEED_FACTS);
+  const [loadingFacts, setLoadingFacts] = useState(false);
   
   // Library State
-  const [books, setBooks] = useState<Book[]>([]);
+  const [books, setBooks] = useState<Book[]>(SEED_BOOKS);
   const [loadingLibrary, setLoadingLibrary] = useState(false);
   
   // Reader State
@@ -34,8 +85,8 @@ export const Feed: React.FC = () => {
     const saved = localStorage.getItem('parent_settings');
     const parsed = JSON.parse(saved || 'null');
     setSettings(parsed);
-    loadFeed(parsed);
-    loadLibrary(parsed);
+    // Don't auto-load on mount if we have seeds, user can load more.
+    // Actually, let's load more in background to append, but keep seeds visual immediately.
   }, []);
 
   // --- Facts Logic ---
@@ -51,7 +102,8 @@ export const Feed: React.FC = () => {
     for (let i = 0; i < 3; i++) {
       const topic = topicPool[Math.floor(Math.random() * topicPool.length)];
       const id = Date.now() + i;
-      const imageUrl = `https://picsum.photos/400/600?random=${id}`; // Fallback random image
+      // Use LoremFlickr for topic-relevant images instead of random picsum
+      const imageUrl = `https://loremflickr.com/800/600/${topic.toLowerCase().replace(' ', ',')}?random=${id}`;
       
       const fact = await generateFunFact(topic, currentSettings || undefined);
       
@@ -63,7 +115,7 @@ export const Feed: React.FC = () => {
         topic
       });
     }
-    setItems(prev => [...prev, ...newItems]);
+    setItems(prev => [...newItems, ...prev]); // Add new items to top
     setLoadingFacts(false);
   };
 
@@ -72,7 +124,12 @@ export const Feed: React.FC = () => {
       setLoadingLibrary(true);
       try {
           const library = await generateLibrary(currentSettings || undefined);
-          setBooks(library);
+          // Assign random seed image to generated books if they lack one
+          const libraryWithImages = library.map((b, i) => ({
+             ...b,
+             coverImage: `https://loremflickr.com/800/600/${b.title.split(' ')[0]}?random=${Date.now()+i}`
+          }));
+          setBooks(prev => [...prev, ...libraryWithImages]);
       } catch (e) {
           console.error("Library error", e);
       }
@@ -259,6 +316,10 @@ export const Feed: React.FC = () => {
                             >
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full -mr-12 -mt-12 blur-2xl"></div>
                                 
+                                {book.coverImage && (
+                                    <img src={book.coverImage} className="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-overlay" alt="" />
+                                )}
+
                                 <div className="relative z-10 w-full">
                                     <div className="text-6xl mb-4 transform group-hover:scale-110 transition-transform filter drop-shadow-lg">{book.emoji}</div>
                                     <h3 className="font-black text-2xl leading-none mb-2 font-display drop-shadow-md">{book.title}</h3>

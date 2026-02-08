@@ -61,6 +61,7 @@ export interface Book {
     emoji: string;
     color: string;
     description: string;
+    coverImage?: string;
 }
 
 export interface Story {

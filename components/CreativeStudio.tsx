@@ -358,18 +358,21 @@ export const CreativeStudio: React.FC = () => {
   };
 
   // --- Mode Selector Card Component ---
-  const GameCard = ({ m, title, icon, color, bg }: any) => (
+  const GameCard = ({ m, title, icon, color, bgImage, desc }: any) => (
       <button 
         onClick={() => { setMode(m); playSound('click'); }} 
-        className={`relative aspect-[4/3] rounded-3xl overflow-hidden shadow-lg hover:scale-[1.02] transition-transform group border-4 border-white ${bg}`}
+        className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-clay hover:scale-[1.02] transition-transform group border-4 border-white bg-slate-200"
       >
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-white z-10">
-              <div className="mb-2 p-3 bg-white/20 rounded-2xl backdrop-blur-sm group-hover:scale-110 transition-transform">
+          <img src={bgImage} alt={title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+          
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-white z-10 p-4 text-center">
+              <div className="mb-3 p-4 bg-white/20 rounded-full backdrop-blur-md shadow-lg group-hover:scale-110 transition-transform ring-2 ring-white/30">
                   {icon}
               </div>
-              <h3 className="font-black text-xl drop-shadow-md">{title}</h3>
+              <h3 className="font-black text-2xl drop-shadow-lg font-display tracking-wide mb-1">{title}</h3>
+              <p className="text-xs font-bold opacity-80 uppercase tracking-widest">{desc}</p>
           </div>
-          <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
       </button>
   );
 
@@ -383,18 +386,60 @@ export const CreativeStudio: React.FC = () => {
         {mode && <button onClick={() => setMode(null)} className="px-4 py-1 bg-white/10 hover:bg-white/20 rounded-full text-xs font-bold">Back to Lobby</button>}
       </div>
 
-      <div className="flex-1 w-full h-full max-w-5xl mx-auto flex flex-col relative">
+      <div className="flex-1 w-full h-full max-w-6xl mx-auto flex flex-col relative">
 
           {/* LOBBY */}
           {mode === null && (
-              <div className="p-6 grid grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4">
-                  <GameCard m="LANGUAGE" title="Speak World" icon={<GlobeIcon className="w-8 h-8"/>} bg="bg-gradient-to-br from-indigo-400 to-indigo-600" />
-                  <GameCard m="DRAW" title="Magic Paint" icon={<FillIcon className="w-8 h-8"/>} bg="bg-gradient-to-br from-purple-400 to-purple-600" />
-                  <GameCard m="BUBBLE" title="Bubble Pop" icon={<CircleIcon className="w-8 h-8"/>} bg="bg-gradient-to-br from-blue-400 to-blue-600" />
-                  <GameCard m="MEMORY" title="Memory Zoo" icon={<PuzzleIcon className="w-8 h-8"/>} bg="bg-gradient-to-br from-green-400 to-green-600" />
-                  <GameCard m="MATH_QUEST" title="Space Math" icon={<MathIcon className="w-8 h-8"/>} bg="bg-gradient-to-br from-orange-400 to-orange-600" />
-                  <GameCard m="WORD_QUEST" title="Word Hunter" icon={<AbcBlockIcon className="w-8 h-8"/>} bg="bg-gradient-to-br from-teal-400 to-teal-600" />
-                  <GameCard m="CHESS" title="Chess Coach" icon={<ChessIcon className="w-8 h-8"/>} bg="bg-gradient-to-br from-slate-500 to-slate-700" />
+              <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4">
+                  <GameCard 
+                    m="LANGUAGE" 
+                    title="Speak World" 
+                    desc="Learn Languages"
+                    icon={<GlobeIcon className="w-8 h-8"/>} 
+                    bgImage="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&w=800&q=80" 
+                  />
+                  <GameCard 
+                    m="DRAW" 
+                    title="Magic Paint" 
+                    desc="Draw & Create"
+                    icon={<FillIcon className="w-8 h-8"/>} 
+                    bgImage="https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=80" 
+                  />
+                  <GameCard 
+                    m="BUBBLE" 
+                    title="Bubble Pop" 
+                    desc="Popping Fun"
+                    icon={<CircleIcon className="w-8 h-8"/>} 
+                    bgImage="https://images.unsplash.com/photo-1504333638930-c8787321eee0?auto=format&fit=crop&w=800&q=80" 
+                  />
+                  <GameCard 
+                    m="MEMORY" 
+                    title="Memory Zoo" 
+                    desc="Match Animals"
+                    icon={<PuzzleIcon className="w-8 h-8"/>} 
+                    bgImage="https://images.unsplash.com/photo-1555543163-daca04e28cc4?auto=format&fit=crop&w=800&q=80" 
+                  />
+                  <GameCard 
+                    m="MATH_QUEST" 
+                    title="Space Math" 
+                    desc="Blast Numbers"
+                    icon={<MathIcon className="w-8 h-8"/>} 
+                    bgImage="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80" 
+                  />
+                  <GameCard 
+                    m="WORD_QUEST" 
+                    title="Word Hunter" 
+                    desc="Find Words"
+                    icon={<AbcBlockIcon className="w-8 h-8"/>} 
+                    bgImage="https://images.unsplash.com/photo-1472289065668-ce650ac443b2?auto=format&fit=crop&w=800&q=80" 
+                  />
+                  <GameCard 
+                    m="CHESS" 
+                    title="Chess Coach" 
+                    desc="Master Strategy"
+                    icon={<ChessIcon className="w-8 h-8"/>} 
+                    bgImage="https://images.unsplash.com/photo-1529699211952-734e80c4d42b?auto=format&fit=crop&w=800&q=80" 
+                  />
               </div>
           )}
 
