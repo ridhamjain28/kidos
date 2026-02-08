@@ -28,14 +28,17 @@ export const Layout: React.FC<LayoutProps> = ({ currentView, onNavigate, childre
   );
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-gray-50 overflow-hidden">
+    <div className="min-h-screen min-h-[100dvh] w-full max-w-full flex flex-col bg-gray-50 overflow-hidden">
       {/* Main Content Area */}
-      <main className="flex-1 relative overflow-hidden">
+      <main className="flex-1 relative overflow-hidden min-h-0">
         {children}
       </main>
 
-      {/* Bottom Navigation */}
-      <nav className="h-20 bg-white border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-50">
+      {/* Bottom Navigation – safe area for notched devices */}
+      <nav
+        className="h-20 min-h-[5rem] bg-white border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-50 shrink-0"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0)' }}
+      >
         <div className="h-full max-w-lg mx-auto flex justify-between items-center px-2">
           <NavItem 
             view={View.FEED} 

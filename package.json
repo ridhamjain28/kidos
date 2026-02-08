@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "predev": "node -e \"const fs=require('fs');const p='public';if(!fs.existsSync(p))fs.mkdirSync(p,{recursive:true});if(fs.existsSync('WonderNest.mp4'))fs.copyFileSync('WonderNest.mp4',p+'/WonderNest.mp4');\"",
+    "predev": "node -e \"const fs=require('fs');const p='public';if(!fs.existsSync(p))fs.mkdirSync(p,{recursive:true});if(fs.existsSync('WonderNest.mp4'))fs.copyFileSync('WonderNest.mp4',p+'/WonderNest.mp4');if(fs.existsSync('wondernest.jpg'))fs.copyFileSync('wondernest.jpg',p+'/wondernest.jpg');\"",
     "dev": "vite",
+    "prebuild": "node -e \"const fs=require('fs');const p='public';if(!fs.existsSync(p))fs.mkdirSync(p,{recursive:true});if(fs.existsSync('WonderNest.mp4'))fs.copyFileSync('WonderNest.mp4',p+'/WonderNest.mp4');if(fs.existsSync('wondernest.jpg'))fs.copyFileSync('wondernest.jpg',p+'/wondernest.jpg');\"",
     "build": "vite build",
     "preview": "vite preview"
   },

@@ -1,0 +1,18 @@
+{
+  "name": "KidOS – WonderFeed",
+  "short_name": "WonderFeed",
+  "description": "AI-powered learning for kids: facts, stories, LearnTV, games & Professor Hoot.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f0f9ff",
+  "theme_color": "#f0f9ff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/wondernest.jpg",
+      "type": "image/jpeg",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ]
+}

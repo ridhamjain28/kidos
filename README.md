@@ -1,25 +1,64 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# KidOS – WonderFeed
 
-# Run and deploy your AI Studio app
+A **kid-safe, AI-powered learning website** for children (ages 2–7): discovery feed, stories, LearnTV, creative games, and **Professor Hoot** – all with optional behavior-based adaptation (IBLM).
 
-This contains everything you need to run your app locally.
+![KidOS WonderFeed](wondernest.jpg)
 
-View your app in AI Studio: https://ai.studio/apps/drive/1MoVAPk6BDgtcZMl1E2jJlcQEx-VCgcMx
+## What it does
 
-## Run Locally
+- **Home / Feed** – Daily facts cards and a story library (AI-generated books with illustrations).
+- **LearnTV** – Short educational “shows”: pick a topic, get a script + images + voiceover that plays in sync.
+- **Games** – Magic Paint (AI describes your drawing), Safari Speech (pronunciation), Memory Zoo (card matching).
+- **Ask Hoot** – Chat with Professor Hoot; short, simple answers and optional images.
+- **Parents** – PIN-gated area: fact checker (search-grounded summaries) and activity insights.
+- **IBLM** – Optional adaptation: calming mode when frustration is high, short-burst content when attention is low (debug HUD: `?iblm=1`).
 
-**Prerequisites:**  Node.js
+## Tech
 
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-2. Set the `GEMINI_API_KEY` in `.env.local` to your Gemini API key (optional for AI features).
-3. **Intro video:** Keep `WonderNest.mp4` in the project root. When you run `npm run dev`, it is copied to `public/` and used as the welcome intro (with a Skip button).
-4. Run the app:
+- **React 19**, **Vite**, **Tailwind CSS**
+- **Google Gemini** (text, image, TTS, optional search grounding)
+- **Local-first** – Child/parent data in browser storage unless you add sync
+
+## Run locally
+
+**Prerequisites:** Node.js (e.g. 18+).
+
+```bash
+git clone https://github.com/ridhamjain28/kidos.git
+cd kidos
+npm install
+```
+
+1. **API key (optional)** – Create `.env.local` and set `GEMINI_API_KEY=your_key` for AI features.
+2. **Intro video** – Keep `WonderNest.mp4` in the project root; `npm run dev` copies it to `public/` and it’s used as the welcome intro (with a Skip button).
+3. **Run the site:**
    ```bash
    npm run dev
    ```
-   Then open **http://localhost:3000** in your browser.
+   Open **http://localhost:3000** in your browser.
+
+## Build for production
+
+```bash
+npm run build
+npm run preview
+```
+
+Use the `dist/` output with any static host (e.g. Vercel, Netlify, GitHub Pages).
+
+## Deploy as a website
+
+- Build: `npm run build`
+- Serve the `dist` folder from your host’s root (or set the host’s “public directory” to `dist`).
+- Ensure routes fall back to `index.html` (SPA) if you use client-side routing later.
+
+The app is set up as a proper website: meta tags, theme color, Open Graph, favicon, and a web app manifest for “Add to Home Screen” and sharing.
+
+## Repository
+
+- **GitHub:** [ridhamjain28/kidos](https://github.com/ridhamjain28/kidos)
+- **AI Studio:** [View app in AI Studio](https://ai.studio/apps/drive/1MoVAPk6BDgtcZMl1E2jJlcQEx-VCgcMx)
+
+## License
+
+Private / unlicensed unless otherwise specified.
