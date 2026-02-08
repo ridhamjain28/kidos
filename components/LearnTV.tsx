@@ -14,6 +14,7 @@ interface Documentary {
     description: string;
     imageUrl: string;
     searchQuery: string;
+    videoUrl?: string;
 }
 
 const REAL_DOCS: Documentary[] = [
@@ -22,42 +23,48 @@ const REAL_DOCS: Documentary[] = [
         title: 'March of the Penguins',
         description: 'Follow the amazing journey of emperor penguins in Antarctica.',
         imageUrl: 'https://images.unsplash.com/photo-1598439210625-5067c578f3f6?q=80&w=2072&auto=format&fit=crop',
-        searchQuery: 'March of the Penguins documentary for kids'
+        searchQuery: 'March of the Penguins documentary for kids',
+        videoUrl: 'https://www.youtube.com/watch?v=L7tWNwlQVDo'
     },
     {
         id: 'd2',
         title: 'A Beautiful Planet',
         description: 'Look at our home, Earth, from the International Space Station.',
         imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop',
-        searchQuery: 'A Beautiful Planet IMAX documentary'
+        searchQuery: 'A Beautiful Planet IMAX documentary',
+        videoUrl: 'https://www.youtube.com/watch?v=QJpFdSXotKI'
     },
     {
         id: 'd3',
         title: 'Born to be Wild',
         description: 'Meet the people rescuing orphaned orangutans and elephants.',
         imageUrl: 'https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?q=80&w=1932&auto=format&fit=crop',
-        searchQuery: 'Born to be Wild IMAX documentary'
+        searchQuery: 'Born to be Wild IMAX documentary',
+        videoUrl: 'https://www.youtube.com/watch?v=P_b5xSVV_wQ'
     },
     {
         id: 'd4',
         title: 'Oceans',
         description: 'Dive deep into the blue and meet the creatures of the sea.',
         imageUrl: 'https://images.unsplash.com/photo-1582967788606-a171f1080ca8?q=80&w=2070&auto=format&fit=crop',
-        searchQuery: 'DisneyNature Oceans documentary'
+        searchQuery: 'DisneyNature Oceans documentary',
+        videoUrl: 'https://www.youtube.com/watch?v=uEtjQjU09T0'
     },
     {
         id: 'd5',
         title: 'Tiny Giants',
         description: 'A day in the life of the smallest animals in the world.',
         imageUrl: 'https://images.unsplash.com/photo-1452573992436-6d508f200830?q=80&w=2062&auto=format&fit=crop',
-        searchQuery: 'Tiny Giants BBC Earth'
+        searchQuery: 'Tiny Giants BBC Earth',
+        videoUrl: 'https://www.youtube.com/watch?v=2n64M7K4uL8'
     },
     {
         id: 'd6',
         title: 'Elephant Family',
         description: 'Watch baby elephants learn and play with their families.',
         imageUrl: 'https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?q=80&w=1932&auto=format&fit=crop',
-        searchQuery: 'Elephant family documentary for kids'
+        searchQuery: 'Elephant family documentary for kids',
+        videoUrl: 'https://www.youtube.com/watch?v=SjWD4Mu7nFL'
     }
 ];
 
@@ -199,8 +206,9 @@ export const LearnTV: React.FC = () => {
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => { const time = parseFloat(e.target.value); if (audioRef.current) { audioRef.current.currentTime = time; setCurrentTime(time); } };
 
   const handleDocClick = (doc: Documentary) => {
-      // Open safe search for documentary
-      window.open(`https://www.google.com/search?q=${encodeURIComponent(doc.searchQuery)}&tbm=vid`, '_blank');
+      // Open specific video if available, otherwise safe search
+      const url = doc.videoUrl || `https://www.youtube.com/results?search_query=${encodeURIComponent(doc.searchQuery)}`;
+      window.open(url, '_blank');
   };
 
   return (
