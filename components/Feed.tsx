@@ -158,32 +158,34 @@ export const Feed: React.FC = () => {
           <span className="text-sm font-bold text-amber-800">Quick facts mode — short and fun!</span>
         </div>
       )}
-      {/* Tab Switcher – mobile-friendly touch targets */}
-      <div className="bg-white p-2 sm:p-3 shadow-sm z-10 flex gap-2 justify-center shrink-0">
+      {/* Tab Switcher – always visible, doesn’t overlap FloatingBuddy, responsive */}
+      <div className="bg-white p-2 sm:p-3 shadow-sm z-20 shrink-0 sticky top-0 flex items-center gap-2 px-2 sm:px-4">
           <button
             type="button"
             onClick={() => setActiveTab('FACTS')}
-            className={`flex items-center gap-2 px-5 py-3.5 min-h-[48px] rounded-full font-bold transition-all active:scale-95 sm:px-6 ${activeTab === 'FACTS' ? 'bg-blue-500 text-white shadow-md' : 'text-slate-400 hover:bg-slate-100 active:bg-slate-200'}`}
+            className={`flex-1 min-w-0 flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-3 min-h-[44px] rounded-full font-bold text-sm sm:text-base transition-all active:scale-95 sm:px-5 ${activeTab === 'FACTS' ? 'bg-blue-500 text-white shadow-md' : 'text-slate-400 hover:bg-slate-100 active:bg-slate-200'}`}
           >
-              <SparklesIcon className="w-5 h-5 shrink-0" /> Daily Facts
+              <SparklesIcon className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+              <span className="truncate">Daily Facts</span>
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('LIBRARY')}
-            className={`flex items-center gap-2 px-5 py-3.5 min-h-[48px] rounded-full font-bold transition-all active:scale-95 sm:px-6 ${activeTab === 'LIBRARY' ? 'bg-yellow-400 text-black shadow-md' : 'text-slate-400 hover:bg-slate-100 active:bg-slate-200'}`}
+            className={`flex-1 min-w-0 flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-3 min-h-[44px] rounded-full font-bold text-sm sm:text-base transition-all active:scale-95 sm:px-5 ${activeTab === 'LIBRARY' ? 'bg-yellow-400 text-black shadow-md' : 'text-slate-400 hover:bg-slate-100 active:bg-slate-200'}`}
           >
-              <BookIcon className="w-5 h-5 shrink-0" /> Library
+              <BookIcon className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+              <span className="truncate">Library</span>
           </button>
       </div>
 
       {/* Content Area – extra bottom padding for nav + safe area */}
-      <div className="flex-1 overflow-y-auto no-scrollbar pb-28 sm:pb-24 relative bg-slate-50">
+      <div className="flex-1 overflow-y-auto no-scrollbar pb-24 sm:pb-24 relative bg-slate-50">
         
         {activeTab === 'FACTS' && (
             <div className="snap-y snap-mandatory h-full overflow-y-auto">
                 {items.map((item) => (
-                    <div key={item.id} className="h-full min-h-[70vh] w-full p-3 sm:p-4 snap-start flex items-center justify-center">
-                    <div className="relative w-full max-w-md h-[85%] min-h-[320px] rounded-3xl overflow-hidden shadow-2xl bg-black">
+                    <div key={item.id} className="h-full min-h-[70vh] w-full p-3 sm:p-4 md:p-6 snap-start flex items-center justify-center">
+                    <div className="relative w-full max-w-md mx-auto h-[85%] min-h-[280px] sm:min-h-[320px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl bg-black">
                         <img 
                         src={item.imageUrl} 
                         alt={item.topic} 
