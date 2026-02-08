@@ -60,6 +60,23 @@
         -ms-overflow-style: none;
         scrollbar-width: none;
       }
+
+      /* Mobile UX: touch targets, no zoom on input focus, tap feedback */
+      @media (max-width: 768px) {
+        input, textarea, select {
+          font-size: 16px !important; /* Prevents iOS zoom on focus */
+        }
+      }
+      * {
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.08);
+      }
+      button, [role="button"], a {
+        touch-action: manipulation;
+      }
+      .overflow-y-auto, .overflow-y-scroll {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
+      }
     </style>
     <script type="importmap">
 {

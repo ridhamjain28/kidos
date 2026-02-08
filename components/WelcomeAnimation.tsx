@@ -1,25 +1,13 @@
-import React, { useState, useRef } from 'react';
-import { OwlIcon, SparklesIcon, PlayIcon } from './Icons';
-
-// Intro video from project root (or use /WonderNest.mp4 if placed in public/)
-const INTRO_VIDEO_SRC = '/WonderNest.mp4';
+import React, { useState } from 'react';
+import { SparklesIcon, PlayIcon } from './Icons';
 
 interface WelcomeAnimationProps {
     onComplete: () => void;
 }
 
 export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete }) => {
-    // -1: Playing intro video, 0: Cover, 1: Greeting, 2: Car Appears, 3: Fly Away
-    const [phase, setPhase] = useState(-1);
-    const videoRef = useRef<HTMLVideoElement>(null);
-
-    const skipVideo = () => {
-        setPhase(0);
-    };
-
-    const handleVideoEnded = () => {
-        setPhase(0);
-    };
+    // 0: Cover, 1: Greeting, 2: Car Appears, 3: Fly Away
+    const [phase, setPhase] = useState(0);
 
     const handleStart = () => {
         setPhase(1); // Start Greeting
@@ -37,31 +25,8 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete }
 
     return (
         <div className={`fixed inset-0 z-[200] flex flex-col items-center justify-center overflow-hidden bg-black transition-opacity duration-500 ${phase === 3 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-            {/* Intro video (phase -1): play WonderNest.mp4, then show title screen */}
-            {phase === -1 && (
-                <div className="absolute inset-0 z-20 flex items-center justify-center bg-black">
-                    <video
-                        ref={videoRef}
-                        src={INTRO_VIDEO_SRC}
-                        className="w-full h-full object-contain"
-                        playsInline
-                        autoPlay
-                        muted={false}
-                        onEnded={handleVideoEnded}
-                        onError={() => skipVideo()}
-                    />
-                    <button
-                        type="button"
-                        onClick={skipVideo}
-                        className="absolute top-6 right-6 px-4 py-2 bg-white/20 hover:bg-white/30 text-white font-bold rounded-full backdrop-blur-sm transition-colors"
-                    >
-                        Skip
-                    </button>
-                </div>
-            )}
-
             {/* Cinematic Background */}
-            <div className={`absolute inset-0 z-0 ${phase === -1 ? 'invisible' : ''}`}>
+            <div className="absolute inset-0 z-0">
                 <img 
                     src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop" 
                     alt="Space Background" 
@@ -74,7 +39,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete }
                 <div className="absolute bottom-1/3 right-1/4 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl animate-pulse delay-700"></div>
             </div>
 
-            <div className={`relative z-10 flex flex-col items-center text-center px-4 w-full h-full justify-center ${phase === -1 ? 'invisible' : ''}`}>
+            <div className="relative z-10 flex flex-col items-center text-center px-4 w-full h-full justify-center">
                 
                 {/* --- HOOT CHARACTER CONTAINER --- */}
                 {/* We use absolute positioning for the fly-away phase to target top-left corner */}
@@ -161,10 +126,11 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete }
                         </p>
                     </div>
 
-                    {/* Start Button */}
-                    <button 
+                    {/* Start Button – mobile-friendly min touch target */}
+                    <button
+                        type="button"
                         onClick={handleStart}
-                        className="group relative px-16 py-6 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-300 hover:to-orange-400 text-indigo-950 rounded-full font-black text-2xl shadow-[0_0_40px_rgba(250,204,21,0.4)] hover:shadow-[0_0_60px_rgba(250,204,21,0.6)] hover:scale-105 active:scale-95 transition-all flex items-center gap-4 ring-4 ring-white/20 backdrop-blur-sm"
+                        className="group relative min-h-[56px] px-10 sm:px-16 py-4 sm:py-6 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-300 hover:to-orange-400 text-indigo-950 rounded-full font-black text-xl sm:text-2xl shadow-[0_0_40px_rgba(250,204,21,0.4)] hover:shadow-[0_0_60px_rgba(250,204,21,0.6)] hover:scale-105 active:scale-95 transition-all flex items-center gap-4 ring-4 ring-white/20 backdrop-blur-sm"
                     >
                         <span>Let's Go!</span>
                         <div className="w-10 h-10 bg-white/30 rounded-full flex items-center justify-center">

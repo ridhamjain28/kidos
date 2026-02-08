@@ -216,7 +216,7 @@ export const LearnTV: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6 pb-24">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 pb-28 sm:pb-24">
         {viewMode === 'AI' && (
             <>
                 {loading && videos.length === 0 ? (
@@ -310,8 +310,8 @@ export const LearnTV: React.FC = () => {
                   <audio ref={audioRef} src={audioUrl} onTimeUpdate={() => { if(audioRef.current) setCurrentTime(audioRef.current.currentTime); }} onLoadedMetadata={() => { if(audioRef.current) setDuration(audioRef.current.duration); }} onEnded={handleVideoEnd} />
               )}
               
-              <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-20 bg-gradient-to-b from-black/80 to-transparent">
-                  <button onClick={closePlayer} className="text-white bg-white/10 hover:bg-white/20 p-2 rounded-full backdrop-blur-md transition-colors">
+              <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-20 bg-gradient-to-b from-black/80 to-transparent" style={{ paddingTop: 'max(1rem, env(safe-area-inset-top))' }}>
+                  <button type="button" onClick={closePlayer} className="min-w-[48px] min-h-[48px] flex items-center justify-center text-white bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-md transition-colors active:scale-95">
                       <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                   </button>
               </div>
@@ -345,23 +345,23 @@ export const LearnTV: React.FC = () => {
 
                   {playerState === 'READY' && (
                       <div className="z-10 flex flex-col items-center animate-bounce-in">
-                           <button onClick={handlePlayFromReady} className="w-24 h-24 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center shadow-[0_0_40px_rgba(220,38,38,0.6)] transition-all hover:scale-110">
+                           <button type="button" onClick={handlePlayFromReady} className="min-w-[80px] min-h-[80px] w-24 h-24 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center shadow-[0_0_40px_rgba(220,38,38,0.6)] transition-all hover:scale-110 active:scale-95">
                                <PlayIcon className="w-10 h-10 ml-2" />
                            </button>
-                           <h2 className="mt-6 text-2xl font-black text-white">Tap to Watch!</h2>
+                           <h2 className="mt-6 text-xl sm:text-2xl font-black text-white">Tap to Watch!</h2>
                       </div>
                   )}
 
                   {(playerState === 'PLAYING' || playerState === 'PAUSED') && !showRecs && (
-                        <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black via-black/80 to-transparent transition-opacity duration-300 opacity-100 md:opacity-0 group-hover:opacity-100 z-30">
+                        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 bg-gradient-to-t from-black via-black/80 to-transparent transition-opacity duration-300 opacity-100 md:opacity-0 group-hover:opacity-100 z-30" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
                             <div className="max-w-3xl mx-auto space-y-4">
                                 <div className="flex items-center gap-3 text-xs font-bold font-mono text-slate-400">
-                                    <span>{Math.floor(currentTime / 60)}:{Math.floor(currentTime % 60).toString().padStart(2, '0')}</span>
-                                    <input type="range" min={0} max={duration || 100} value={currentTime} onChange={handleSeek} className="flex-1 h-1.5 bg-slate-600 rounded-full appearance-none cursor-pointer accent-red-600 hover:accent-red-500" />
-                                    <span>{Math.floor(duration / 60)}:{Math.floor(duration % 60).toString().padStart(2, '0')}</span>
+                                    <span className="tabular-nums">{Math.floor(currentTime / 60)}:{Math.floor(currentTime % 60).toString().padStart(2, '0')}</span>
+                                    <input type="range" min={0} max={duration || 100} value={currentTime} onChange={handleSeek} className="flex-1 min-h-[24px] bg-slate-600 rounded-full appearance-none cursor-pointer accent-red-600 hover:accent-red-500 touch-none" />
+                                    <span className="tabular-nums">{Math.floor(duration / 60)}:{Math.floor(duration % 60).toString().padStart(2, '0')}</span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <button onClick={togglePlay} className="w-12 h-12 bg-white text-black rounded-full flex items-center justify-center hover:scale-105 transition-transform">
+                                    <button type="button" onClick={togglePlay} className="min-w-[48px] min-h-[48px] w-12 h-12 bg-white text-black rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-transform">
                                         {playerState === 'PLAYING' ? <PauseIcon className="w-5 h-5" /> : <PlayIcon className="w-5 h-5 ml-1" />}
                                     </button>
                                 </div>

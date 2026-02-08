@@ -54,10 +54,10 @@ export const ChatBuddy: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">
+      <div className="flex-1 overflow-y-auto p-4 pb-6 space-y-6">
         {messages.map((msg) => (
           <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[85%] p-5 rounded-2xl shadow-sm ${
+            <div className={`max-w-[90%] sm:max-w-[85%] p-4 sm:p-5 rounded-2xl shadow-sm ${
               msg.role === 'user' 
                 ? 'bg-indigo-500 text-white rounded-tr-none' 
                 : 'bg-white text-gray-800 rounded-tl-none border border-indigo-100'
@@ -92,20 +92,21 @@ export const ChatBuddy: React.FC = () => {
         <div ref={scrollRef} />
       </div>
 
-      <div className="p-4 bg-white border-t border-indigo-100">
-        <div className="flex gap-2 max-w-2xl mx-auto">
+      <div className="p-4 bg-white border-t border-indigo-100 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className="flex gap-2 max-w-2xl mx-auto items-center">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-            placeholder="Ask a big question... (e.g. Why is grass green?)"
-            className="flex-1 p-4 bg-gray-100 rounded-full border-2 border-transparent focus:border-indigo-400 focus:bg-white focus:outline-none text-lg transition-all"
+            placeholder="Ask a big question..."
+            className="flex-1 min-h-[48px] p-3 sm:p-4 bg-gray-100 rounded-full border-2 border-transparent focus:border-indigo-400 focus:bg-white focus:outline-none text-base transition-all"
           />
-          <button 
+          <button
+            type="button"
             onClick={handleSend}
             disabled={isThinking || !input.trim()}
-            className="w-14 h-14 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 text-white rounded-full flex items-center justify-center shadow-lg transition-all active:scale-95"
+            className="min-w-[48px] min-h-[48px] w-14 h-14 shrink-0 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 text-white rounded-full flex items-center justify-center shadow-lg transition-all active:scale-95"
           >
             <SendIcon className="w-6 h-6" />
           </button>

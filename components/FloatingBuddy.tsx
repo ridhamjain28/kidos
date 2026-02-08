@@ -123,13 +123,13 @@ export const FloatingBuddy: React.FC<FloatingBuddyProps> = ({ currentView }) => 
         <>
             {isActive && <div className="fixed inset-0 bg-black/60 z-[90] backdrop-blur-sm animate-in fade-in duration-300" onClick={toggleActive}></div>}
 
-            <div 
-                className={`fixed z-[100] transition-all duration-700 ease-in-out cursor-pointer ${
-                    isActive 
-                    ? 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-[3]' 
-                    : 'top-4 left-4 scale-100 hover:scale-110' 
+            <div
+                className={`fixed z-[100] transition-all duration-700 ease-in-out cursor-pointer touch-manipulation ${
+                    isActive
+                    ? 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-[2] sm:scale-[3]'
+                    : 'bottom-24 left-4 sm:bottom-auto sm:top-4 sm:left-4 scale-100 hover:scale-110 active:scale-95'
                 }`}
-                // NOTE: Changed right-4 to left-4 above
+                style={!isActive ? { minWidth: 48, minHeight: 48 } : undefined}
                 onClick={!isActive ? toggleActive : undefined}
             >
                 <div className={`relative group perspective-1000 ${animationMode === 'spin' ? 'animate-spin-y' : animationMode === 'excited' ? 'animate-bounce' : 'animate-float'}`}>
@@ -186,18 +186,19 @@ export const FloatingBuddy: React.FC<FloatingBuddyProps> = ({ currentView }) => 
                 </div>
 
                 {isActive && (
-                    <div className="absolute top-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 animate-in fade-in slide-in-from-top-4">
-                        <button 
+                    <div className="absolute top-20 sm:top-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 animate-in fade-in slide-in-from-top-4">
+                        <button
+                            type="button"
                             onClick={toggleListening}
-                            className={`w-16 h-16 rounded-full flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.3)] border-4 border-white transition-all hover:scale-110 active:scale-95 ${isListening ? 'bg-red-500 animate-pulse' : 'bg-gradient-to-br from-indigo-500 to-indigo-700'}`}
+                            className={`min-w-[56px] min-h-[56px] w-14 h-14 rounded-full flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.3)] border-4 border-white transition-all hover:scale-110 active:scale-95 ${isListening ? 'bg-red-500 animate-pulse' : 'bg-gradient-to-br from-indigo-500 to-indigo-700'}`}
                         >
                             <MicIcon className="w-8 h-8 text-white" />
                         </button>
-                        {isListening && <p className="text-[8px] text-white font-bold bg-black/50 px-3 py-1 rounded-full backdrop-blur-md">I'm Listening...</p>}
-                        
-                        <button 
+                        {isListening && <p className="text-xs text-white font-bold bg-black/50 px-3 py-1.5 rounded-full backdrop-blur-md">I'm Listening...</p>}
+                        <button
+                            type="button"
                             onClick={(e) => { e.stopPropagation(); toggleActive(); }}
-                            className="mt-4 text-[8px] font-bold text-white/80 hover:text-white bg-white/20 px-4 py-2 rounded-full hover:bg-white/30 transition-colors"
+                            className="min-h-[44px] mt-4 text-xs font-bold text-white/80 hover:text-white bg-white/20 px-5 py-2.5 rounded-full hover:bg-white/30 active:scale-95 transition-colors"
                         >
                             Close Hoot
                         </button>

@@ -158,40 +158,42 @@ export const Feed: React.FC = () => {
           <span className="text-sm font-bold text-amber-800">Quick facts mode — short and fun!</span>
         </div>
       )}
-      {/* Tab Switcher */}
-      <div className="bg-white p-2 shadow-sm z-10 flex gap-2 justify-center shrink-0">
-          <button 
+      {/* Tab Switcher – mobile-friendly touch targets */}
+      <div className="bg-white p-2 sm:p-3 shadow-sm z-10 flex gap-2 justify-center shrink-0">
+          <button
+            type="button"
             onClick={() => setActiveTab('FACTS')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-full font-bold transition-all ${activeTab === 'FACTS' ? 'bg-blue-500 text-white shadow-md' : 'text-slate-400 hover:bg-slate-100'}`}
+            className={`flex items-center gap-2 px-5 py-3.5 min-h-[48px] rounded-full font-bold transition-all active:scale-95 sm:px-6 ${activeTab === 'FACTS' ? 'bg-blue-500 text-white shadow-md' : 'text-slate-400 hover:bg-slate-100 active:bg-slate-200'}`}
           >
-              <SparklesIcon className="w-5 h-5" /> Daily Facts
+              <SparklesIcon className="w-5 h-5 shrink-0" /> Daily Facts
           </button>
-          <button 
+          <button
+            type="button"
             onClick={() => setActiveTab('LIBRARY')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-full font-bold transition-all ${activeTab === 'LIBRARY' ? 'bg-yellow-400 text-black shadow-md' : 'text-slate-400 hover:bg-slate-100'}`}
+            className={`flex items-center gap-2 px-5 py-3.5 min-h-[48px] rounded-full font-bold transition-all active:scale-95 sm:px-6 ${activeTab === 'LIBRARY' ? 'bg-yellow-400 text-black shadow-md' : 'text-slate-400 hover:bg-slate-100 active:bg-slate-200'}`}
           >
-              <BookIcon className="w-5 h-5" /> Library
+              <BookIcon className="w-5 h-5 shrink-0" /> Library
           </button>
       </div>
 
-      {/* Content Area */}
-      <div className="flex-1 overflow-y-auto no-scrollbar pb-24 relative bg-slate-50">
+      {/* Content Area – extra bottom padding for nav + safe area */}
+      <div className="flex-1 overflow-y-auto no-scrollbar pb-28 sm:pb-24 relative bg-slate-50">
         
         {activeTab === 'FACTS' && (
             <div className="snap-y snap-mandatory h-full overflow-y-auto">
                 {items.map((item) => (
-                    <div key={item.id} className="h-full w-full p-4 snap-start flex items-center justify-center">
-                    <div className="relative w-full max-w-md h-[90%] rounded-3xl overflow-hidden shadow-2xl bg-black">
+                    <div key={item.id} className="h-full min-h-[70vh] w-full p-3 sm:p-4 snap-start flex items-center justify-center">
+                    <div className="relative w-full max-w-md h-[85%] min-h-[320px] rounded-3xl overflow-hidden shadow-2xl bg-black">
                         <img 
                         src={item.imageUrl} 
                         alt={item.topic} 
                         className="absolute inset-0 w-full h-full object-cover opacity-80"
                         />
-                        <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
-                        <span className="inline-block px-3 py-1 bg-yellow-400 text-black font-bold rounded-full text-xs mb-3">
+                        <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-8 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
+                        <span className="inline-block px-3 py-1.5 bg-yellow-400 text-black font-bold rounded-full text-xs mb-2 sm:mb-3">
                             {item.topic}
                         </span>
-                        <p className="text-white text-3xl font-black font-sans leading-tight shadow-black drop-shadow-md">
+                        <p className="text-white text-xl sm:text-2xl md:text-3xl font-black font-sans leading-tight shadow-black drop-shadow-md">
                             {item.fact}
                         </p>
                         </div>
@@ -206,9 +208,10 @@ export const Feed: React.FC = () => {
                             <span className="font-bold">Loading tailored content...</span>
                         </div>
                     ) : (
-                        <button 
+                        <button
+                            type="button"
                             onClick={() => loadFeed(settings)}
-                            className="px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-full font-bold shadow-lg transform transition active:scale-95"
+                            className="min-h-[48px] px-8 py-3.5 bg-blue-500 hover:bg-blue-600 text-white rounded-full font-bold shadow-lg transform transition active:scale-95"
                         >
                             Load More Facts!
                         </button>
@@ -218,23 +221,24 @@ export const Feed: React.FC = () => {
         )}
 
         {activeTab === 'LIBRARY' && (
-            <div className="p-4 md:p-6">
-                <div className="mb-6">
-                    <h2 className="text-2xl font-black text-slate-800 mb-2 font-serif">Reading Time! 📚</h2>
-                    <p className="text-slate-500">Pick a book to start a magical adventure.</p>
+            <div className="p-4 md:p-6 pb-8">
+                <div className="mb-4 sm:mb-6">
+                    <h2 className="text-xl sm:text-2xl font-black text-slate-800 mb-1 sm:mb-2 font-serif">Reading Time! 📚</h2>
+                    <p className="text-sm sm:text-base text-slate-500">Pick a book to start a magical adventure.</p>
                 </div>
-                
+
                 {loadingLibrary && books.length === 0 ? (
-                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                        {[1,2,3,4].map(i => <div key={i} className="aspect-[3/4] bg-slate-200 rounded-2xl animate-pulse"></div>)}
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                        {[1,2,3,4].map(i => <div key={i} className="aspect-[3/4] bg-slate-200 rounded-2xl animate-pulse" />)}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                         {books.map((book) => (
-                            <div 
-                                key={book.id} 
+                            <button
+                                type="button"
+                                key={book.id}
                                 onClick={() => openBook(book)}
-                                className={`aspect-[3/4] rounded-2xl p-4 flex flex-col justify-between shadow-lg cursor-pointer transform hover:scale-[1.02] transition-all ${book.color} text-white relative overflow-hidden group`}
+                                className={`aspect-[3/4] rounded-2xl p-3 sm:p-4 flex flex-col justify-between shadow-lg cursor-pointer transform hover:scale-[1.02] active:scale-[0.98] transition-all text-left ${book.color} text-white relative overflow-hidden group min-h-0`}
                             >
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full -mr-12 -mt-12 blur-xl"></div>
                                 
@@ -244,11 +248,11 @@ export const Feed: React.FC = () => {
                                     <p className="text-xs font-bold opacity-90 line-clamp-2">{book.description}</p>
                                 </div>
                                 <div className="flex justify-end mt-2">
-                                    <div className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full flex items-center gap-1 font-bold text-xs">
+                                    <div className="px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-full flex items-center gap-1 font-bold text-xs">
                                         <span>Read</span> <BookIcon className="w-3 h-3" />
                                     </div>
                                 </div>
-                            </div>
+                            </button>
                         ))}
                     </div>
                 )}
@@ -262,10 +266,12 @@ export const Feed: React.FC = () => {
               {/* Background Wood Texture/Table */}
               <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/wood-pattern.png')] opacity-20 pointer-events-none"></div>
 
-              {/* Close Button */}
-              <button 
-                onClick={() => setActiveBook(null)} 
-                className="absolute top-4 right-4 z-50 w-12 h-12 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center transition-colors backdrop-blur-md"
+              {/* Close Button – safe area and min touch target */}
+              <button
+                type="button"
+                onClick={() => setActiveBook(null)}
+                className="absolute z-50 min-w-[48px] min-h-[48px] w-12 h-12 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center transition-colors backdrop-blur-md active:scale-95 right-4 top-4"
+                style={{ top: 'max(1rem, env(safe-area-inset-top))' }}
               >
                   <XIcon className="w-6 h-6" />
               </button>
@@ -309,9 +315,10 @@ export const Feed: React.FC = () => {
                                            <div className="text-6xl mb-4">{activeBook.emoji}</div>
                                            <p className="font-serif text-slate-500 italic">WonderFeed Library</p>
                                        </div>
-                                       <button 
+                                       <button
+                                          type="button"
                                           onClick={handleNextPage}
-                                          className="w-full md:w-auto px-12 py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-full shadow-lg text-xl flex items-center justify-center gap-3 transition-transform hover:scale-105"
+                                          className="w-full md:w-auto min-h-[48px] px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-full shadow-lg text-lg sm:text-xl flex items-center justify-center gap-3 transition-transform hover:scale-105 active:scale-95"
                                        >
                                            <BookIcon className="w-6 h-6" /> Open Book
                                        </button>
@@ -365,20 +372,21 @@ export const Feed: React.FC = () => {
                                          Page {currentPage + 1}
                                      </div>
 
-                                     {/* Navigation Controls */}
-                                     <div className="h-20 shrink-0 flex items-center justify-between px-6 md:px-12 z-10 relative">
-                                          <button 
+                                     {/* Navigation Controls – mobile-friendly touch targets */}
+                                     <div className="h-20 min-h-[72px] shrink-0 flex items-center justify-between px-4 md:px-12 z-10 relative pb-[env(safe-area-inset-bottom)]">
+                                          <button
+                                            type="button"
                                             onClick={handlePrevPage}
-                                            className="w-12 h-12 rounded-full border-2 border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-800 hover:border-slate-800 transition-all hover:bg-slate-100"
+                                            className="min-w-[48px] min-h-[48px] w-12 h-12 rounded-full border-2 border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-800 hover:border-slate-800 transition-all hover:bg-slate-100 active:scale-95"
                                           >
                                               <span className="text-xl">←</span>
                                           </button>
-                                          
-                                          <button 
+                                          <button
+                                            type="button"
                                             onClick={handleNextPage}
-                                            className="px-8 py-3 bg-yellow-400 hover:bg-yellow-500 text-black font-bold rounded-xl shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all border-2 border-black flex items-center gap-2"
+                                            className="min-h-[48px] px-6 py-3 sm:px-8 bg-yellow-400 hover:bg-yellow-500 text-black font-bold rounded-xl shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] active:scale-95 transition-all border-2 border-black flex items-center gap-2"
                                           >
-                                              {currentPage === currentStory.pages.length - 1 ? 'Finish' : 'Next Page'} <span className="text-xl">→</span>
+                                              {currentPage === currentStory.pages.length - 1 ? 'Finish' : 'Next'} <span className="text-xl">→</span>
                                           </button>
                                      </div>
                                 </div>
