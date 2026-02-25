@@ -77,6 +77,24 @@ export type EnergyLevel = 'CALM' | 'ENGAGED' | 'FRUSTRATED' | 'TIRED';
 /** Content mode driven by IBLM adaptation logic (spec §3.2) */
 export type ContentMode = 'NORMAL' | 'CALMING_ESCAPE' | 'SHORT_BURST';
 
+export interface TopicalInterest {
+  topic: string;
+  weight: number; // 0.0 - 1.0 (decays over time)
+  lastInteraction: number;
+}
+
+export interface MasteryRecord {
+  topic: string;
+  level: 1 | 2 | 3; // Comfort, Stretch, Leap
+  successCount: number;
+  lastQuizScore: number;
+}
+
+export interface BehavioralVector {
+  shortTerm: TopicalInterest[];
+  longTerm: MasteryRecord[];
+}
+
 export interface IBLMMetrics {
   /** Duration (ms) between content interactions; rolling average */
   attentionSpan: number;
@@ -88,6 +106,8 @@ export interface IBLMMetrics {
   sessionDuration: number;
   /** Increases on success, influences difficulty */
   masteryScore: number;
+  /** Behavioral vectors (spec §4) */
+  vectors: BehavioralVector;
 }
 
 export interface LearnVideo {

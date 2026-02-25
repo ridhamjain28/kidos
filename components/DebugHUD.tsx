@@ -44,6 +44,28 @@ export const DebugHUD: React.FC = () => {
             <span>{metrics.curiosityType}</span>
             <span>Energy</span>
             <span>{metrics.energyLevel}</span>
+            <span>Mastery</span>
+            <span>{metrics.masteryScore}</span>
+          </div>
+
+          <div className="pt-1 border-t border-slate-700 text-[10px] space-y-1">
+            <div className="font-bold text-blue-400">STV (Curiosity)</div>
+            {metrics.vectors.shortTerm.length === 0 && <div className="italic text-slate-500">None</div>}
+            {metrics.vectors.shortTerm.map((t, i) => (
+              <div key={i} className="flex justify-between">
+                <span className="truncate w-24">{t.topic}</span>
+                <span>{(t.weight * 100).toFixed(0)}%</span>
+              </div>
+            ))}
+            
+            <div className="font-bold text-emerald-400 pt-1">LMV (Mastery)</div>
+            {metrics.vectors.longTerm.length === 0 && <div className="italic text-slate-500">None</div>}
+            {metrics.vectors.longTerm.map((t, i) => (
+              <div key={i} className="flex justify-between">
+                <span className="truncate w-24">{t.topic}</span>
+                <span>Lvl {t.level}</span>
+              </div>
+            ))}
           </div>
           <div className="flex flex-wrap gap-1 pt-1 border-t border-slate-700">
             <button

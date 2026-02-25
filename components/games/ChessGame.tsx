@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useGameSound } from '../../hooks/useGameSound';
 import { gameService } from '../../services/gameService';
 import { LightBulbIcon, SparklesIcon } from '../Icons';
+import { useIBLM } from '../../context/IBLMContext';
 
 const INITIAL_BOARD = [
     ['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'],
@@ -16,6 +17,7 @@ const INITIAL_BOARD = [
 
 export const ChessGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     const playSound = useGameSound();
+    const { startInteraction, endInteraction } = useIBLM();
     const [board, setBoard] = useState(INITIAL_BOARD);
     const [selectedPos, setSelectedPos] = useState<{r: number, c: number} | null>(null);
     const [turn, setTurn] = useState<'white' | 'black'>('white');
@@ -28,7 +30,11 @@ export const ChessGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         
         // Select logic
         if (selectedPos === null) { 
-            if (piece && isWhitePiece && turn === 'white') { setSelectedPos({r, c}); playSound('click'); } 
+            if (piece && isWhitePiece && turn === 'white') { 
+                setSelectedPos({r, c}); 
+                playSound('click'); 
+                startInteraction('chess', 'game');
+            } 
             return; 
         }
         
@@ -75,7 +81,7 @@ export const ChessGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     return (
         <div className="flex-1 bg-slate-200 p-4 flex flex-col md:flex-row gap-8 items-center justify-center animate-in fade-in h-full">
             <div className="absolute top-4 left-4">
-                <button onClick={onBack} className="px-4 py-2 bg-white rounded-full font-bold shadow-md hover:scale-105 transition-transform text-slate-700">← Back</button>
+                <button onClick={() => { endInteraction(true, 'Chess'); onBack(); }} className="px-4 py-2 bg-white rounded-full font-bold shadow-md hover:scale-105 transition-transform text-slate-700">← Back</button>
             </div>
 
             <div className="bg-[#b58863] p-4 rounded-lg shadow-2xl">

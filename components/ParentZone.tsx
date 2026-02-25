@@ -37,15 +37,26 @@ export const ParentZone: React.FC = () => {
   const [sources, setSources] = useState<GroundingChunk[]>([]);
   const [loadingSearch, setLoadingSearch] = useState(false);
 
+  // Logs State
+  const [logs, setLogs] = useState<ActivityLog[]>(MOCK_LOGS);
+
   useEffect(() => {
     // Load settings from local storage
     const savedSettings = localStorage.getItem('parent_settings');
+    let currentSettings = settings;
     if (savedSettings) {
-        setSettings(JSON.parse(savedSettings));
+        currentSettings = JSON.parse(savedSettings);
+        setSettings(currentSettings);
     }
+
+    // Load actual logs
+    const savedLogs = localStorage.getItem('activity_logs');
+    const logsData = savedLogs ? JSON.parse(savedLogs) : MOCK_LOGS;
+    setLogs(logsData);
+
     // Generate initial insight
     setLoadingInsight(true);
-    generateParentInsights(MOCK_LOGS, savedSettings ? JSON.parse(savedSettings) : settings)
+    generateParentInsights(logsData, currentSettings)
         .then(setInsightText)
         .finally(() => setLoadingInsight(false));
   }, []);
@@ -69,7 +80,7 @@ export const ParentZone: React.FC = () => {
       alert("Settings Saved! The app will now customize content for " + settings.childName);
       // Refresh insights with new name/age
       setLoadingInsight(true);
-      generateParentInsights(MOCK_LOGS, settings).then(setInsightText).finally(() => setLoadingInsight(false));
+      generateParentInsights(logs, settings).then(setInsightText).finally(() => setLoadingInsight(false));
   };
 
   const toggleTopic = (topic: string) => {
@@ -180,11 +191,11 @@ export const ParentZone: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Recent Logs */}
+                    {/* Recent Logs - Updated to use real logs */}
                     <div className="bg-white p-6 rounded-2xl shadow-sm">
                         <h3 className="font-bold text-slate-700 mb-4">Recent Activity</h3>
                         <div className="space-y-3">
-                            {MOCK_LOGS.map(log => (
+                            {logs.map(log => (
                                 <div key={log.id} className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
                                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold 
                                         ${log.type === 'video' ? 'bg-red-100 text-red-600' : 

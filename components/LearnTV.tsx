@@ -4,6 +4,7 @@ import { generateLearnTopics, generateRelatedTopics, generateImage, generateLess
 import { LearnVideo, ImageSize, ParentSettings } from '../types';
 import { useIBLM } from '../context/IBLMContext';
 import { TvIcon, PlayIcon, PauseIcon, SparklesIcon, GlobeIcon } from './Icons';
+import { QuizOverlay } from './QuizOverlay';
 
 type PlayerState = 'IDLE' | 'GENERATING' | 'READY' | 'PLAYING' | 'PAUSED' | 'ENDED' | 'ERROR';
 type ViewMode = 'AI' | 'DOCS';
@@ -69,8 +70,10 @@ const REAL_DOCS: Documentary[] = [
 ];
 
 export const LearnTV: React.FC = () => {
-  const { tvBuffer: iblmTvBuffer } = useIBLM();
+  const { tvBuffer: iblmTvBuffer, startInteraction, endInteraction, decideNextContent } = useIBLM();
   const [viewMode, setViewMode] = useState<ViewMode>('AI');
+  const [showQuizFor, setShowQuizFor] = useState<string | null>(null);
+  const [isChallenge, setIsChallenge] = useState(false);
   const [videos, setVideos] = useState<LearnVideo[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -150,6 +153,10 @@ export const LearnTV: React.FC = () => {
     
     if (audioUrl) { URL.revokeObjectURL(audioUrl); setAudioUrl(null); }
 
+    const rec = decideNextContent(video.category);
+    setIsChallenge(rec.isChallenge);
+    startInteraction(video.id, 'video');
+
     try {
         setGenerationStep('Thinking of a story...');
         const { script, visualPrompts } = await generateLessonScript(video.title);
@@ -181,7 +188,15 @@ export const LearnTV: React.FC = () => {
 
   const handlePlayFromReady = () => { if (audioRef.current) audioRef.current.play().then(() => setPlayerState('PLAYING')); else setPlayerState('PLAYING'); };
 
-  const handleVideoEnd = async () => { setPlayerState('ENDED'); setShowRecs(true); if (activeVideo) loadRecommendations(activeVideo.title); };
+  const handleVideoEnd = async () => { 
+    setPlayerState('ENDED'); 
+    setShowRecs(true); 
+    if (activeVideo) {
+        endInteraction(true, activeVideo.category);
+        if (isChallenge) setShowQuizFor(activeVideo.category);
+        loadRecommendations(activeVideo.title); 
+    }
+  };
 
   const loadRecommendations = async (currentTopic: string) => {
       setLoadingRecs(true);
@@ -400,6 +415,13 @@ export const LearnTV: React.FC = () => {
                   )}
               </div>
           </div>
+      )}
+
+      {showQuizFor && (
+          <QuizOverlay 
+              topic={showQuizFor} 
+              onClose={() => setShowQuizFor(null)} 
+          />
       )}
     </div>
   );

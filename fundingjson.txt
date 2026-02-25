@@ -1,0 +1,112 @@
+{
+    "$schema": "https://fundingjson.org/schema/v1.1.0.json",
+    "version": "v1.1.0",
+    "entity": {
+        "type": "organisation",
+        "role": "owner",
+        "name": "KidOS Labs",
+        "email": "founders@kidos.app",
+        "phone": "",
+        "description": "KidOS Labs builds KidOS, a child-first intelligent operating system designed to replace passive, addictive content consumption with structured cognitive growth. Our core innovation, IBLM (Individual Behaviour Learning Model), adapts in real time to a child’s learning patterns, attention span, and behavioral signals to create a personalized digital environment.\n\nWe focus exclusively on children, aligning technology with developmental psychology, cognitive science, and responsible AI principles. The mission is to create a safe, growth-oriented digital infrastructure for the next generation.",
+        "webpageUrl": {
+            "url": "https://kidos.app",
+            "wellKnown": ""
+        }
+    },
+    "projects": [
+        {
+            "guid": "kidos-core",
+            "name": "KidOS Core Platform",
+            "description": "KidOS Core is a child-centric digital operating environment that replaces algorithm-driven entertainment feeds with structured, goal-aligned learning pathways. It integrates curated content layers, interactive cognitive exercises, parental dashboards, and adaptive UX flows.\n\nThe platform is designed to function as a safe digital foundation for children, eliminating exposure to manipulative engagement loops while promoting structured curiosity and skill development.",
+            "webpageUrl": {
+                "url": "https://kidos.app/platform"
+            },
+            "repositoryUrl": {
+                "url": "https://github.com/kidos-labs/kidos-core",
+                "wellKnown": "https://github.com/kidos-labs/kidos-core/blob/main/.well-known/funding-manifest-urls"
+            },
+            "licenses": ["spdx:AGPL-3.0"],
+            "tags": ["education-tech", "ai-platform", "child-safety", "adaptive-learning", "edtech"]
+        },
+        {
+            "guid": "iblm-engine",
+            "name": "IBLM (Individual Behaviour Learning Model)",
+            "description": "IBLM is a proprietary adaptive intelligence engine that models individual behavioral signals to personalize cognitive challenges, pacing, and content exposure for children. Unlike conventional recommendation engines optimized for retention, IBLM optimizes for developmental outcomes.\n\nThe system continuously updates behavioral embeddings, attention metrics, and skill progression graphs to dynamically restructure the child’s digital environment. It is designed for explainability, parental transparency, and ethical AI deployment.",
+            "webpageUrl": {
+                "url": "https://kidos.app/iblm"
+            },
+            "repositoryUrl": {
+                "url": "https://github.com/kidos-labs/iblm-engine",
+                "wellKnown": "https://github.com/kidos-labs/iblm-engine/blob/main/.well-known/funding-manifest-urls"
+            },
+            "licenses": ["spdx:Proprietary"],
+            "tags": ["machine-learning", "behavior-modeling", "personalization", "ai-engine", "child-development"]
+        }
+    ],
+    "funding": {
+        "channels": [
+            {
+                "guid": "bank-transfer",
+                "type": "bank",
+                "address": "",
+                "description": "Direct bank transfers are accepted. Please contact us via email for banking details."
+            },
+            {
+                "guid": "online-gateway",
+                "type": "payment-provider",
+                "address": "https://kidos.app/support",
+                "description": "Secure online payment gateway supporting one-time and recurring contributions."
+            }
+        ],
+        "plans": [
+            {
+                "guid": "infra-monthly",
+                "status": "active",
+                "name": "Infrastructure and Cloud Hosting",
+                "description": "Covers cloud compute, storage, model training infrastructure, and data security costs for KidOS and IBLM.",
+                "amount": 5000,
+                "currency": "USD",
+                "frequency": "monthly",
+                "channels": ["online-gateway"]
+            },
+            {
+                "guid": "research-development",
+                "status": "active",
+                "name": "AI Research and Development",
+                "description": "Funds ongoing development of the IBLM engine, behavioral modeling research, and child-safe AI experimentation.",
+                "amount": 15000,
+                "currency": "USD",
+                "frequency": "monthly",
+                "channels": ["bank-transfer"]
+            },
+            {
+                "guid": "community-support",
+                "status": "active",
+                "name": "Open Support Contribution",
+                "description": "Contribute any amount to support KidOS’s mission of building ethical AI infrastructure for children.",
+                "amount": 0,
+                "currency": "USD",
+                "frequency": "one-time",
+                "channels": ["bank-transfer", "online-gateway"]
+            }
+        ],
+        "history": [
+            {
+                "year": 2024,
+                "income": 0,
+                "expenses": 12000,
+                "taxes": 0,
+                "currency": "USD",
+                "description": "Initial prototyping and research phase funded by founders."
+            },
+            {
+                "year": 2025,
+                "income": 25000,
+                "expenses": 30000,
+                "taxes": 0,
+                "currency": "USD",
+                "description": "Pre-seed support and infrastructure expansion."
+            }
+        ]
+    }
+}

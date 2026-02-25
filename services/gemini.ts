@@ -1,5 +1,3 @@
-
-
 import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { ImageSize, LearnVideo, GeneratedVideo, ParentSettings, ActivityLog, Book, Story, View, IBLMMetrics } from "../types";
 
@@ -414,7 +412,7 @@ export const pollForVideo = async (operation: any): Promise<GeneratedVideo | nul
     const uri = currentOp.response?.generatedVideos?.[0]?.video?.uri;
     if (uri) {
         return {
-            uri: `${uri}&key=${process.env.API_KEY}`,
+            uri: `${uri}&key=${import.meta.env.VITE_API_KEY}`,
             mimeType: 'video/mp4'
         };
     }

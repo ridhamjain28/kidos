@@ -3,6 +3,7 @@ import { generateFunFact, generateLibrary, generateStory, generateImage, promptF
 import { FeedItem, ParentSettings, Book, Story, ImageSize } from '../types';
 import { useIBLM } from '../context/IBLMContext';
 import { SparklesIcon, BookIcon, XIcon, PlayIcon } from './Icons';
+import { QuizOverlay } from './QuizOverlay';
 
 const DEFAULT_TOPICS = ['Dinosaurs', 'Space', 'Ocean', 'Insects', 'Robots', 'Castles', 'Jungle'];
 
@@ -58,8 +59,10 @@ const SEED_BOOKS: Book[] = [
 ];
 
 export const Feed: React.FC = () => {
-  const { contentMode } = useIBLM();
+  const { contentMode, startInteraction, endInteraction, decideNextContent } = useIBLM();
   const [activeTab, setActiveTab] = useState<'FACTS' | 'LIBRARY'>('FACTS');
+  const [showQuizFor, setShowQuizFor] = useState<string | null>(null);
+  const [activeChallenge, setActiveChallenge] = useState<Record<string, boolean>>({});
   
   // Facts State
   const [items, setItems] = useState<FeedItem[]>(SEED_FACTS);
@@ -252,7 +255,28 @@ export const Feed: React.FC = () => {
             <div className="px-4 pb-24 w-full">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-[1600px] mx-auto">
                     {items.map((item) => (
-                        <div key={item.id} className="w-full bg-white rounded-[32px] overflow-hidden shadow-clay transform transition hover:scale-[1.02] hover:shadow-xl flex flex-col">
+                        <div 
+                            key={item.id} 
+                            onMouseEnter={() => {
+                                const rec = decideNextContent(item.topic);
+                                if (rec.isChallenge) {
+                                    setActiveChallenge(prev => ({ ...prev, [item.id]: true }));
+                                }
+                                startInteraction(item.id, 'fact');
+                            }}
+                            onMouseLeave={() => {
+                                endInteraction(true, item.topic);
+                                if (activeChallenge[item.id]) {
+                                    setShowQuizFor(item.topic);
+                                    setActiveChallenge(prev => {
+                                        const next = { ...prev };
+                                        delete next[item.id];
+                                        return next;
+                                    });
+                                }
+                            }}
+                            className="w-full bg-white rounded-[32px] overflow-hidden shadow-clay transform transition hover:scale-[1.02] hover:shadow-xl flex flex-col"
+                        >
                             <div className="relative aspect-[4/5] w-full">
                                 <img 
                                     src={item.imageUrl} 
@@ -475,6 +499,13 @@ export const Feed: React.FC = () => {
                                 </div>
                             </div>
                         )}
+
+      {showQuizFor && (
+          <QuizOverlay 
+              topic={showQuizFor} 
+              onClose={() => setShowQuizFor(null)} 
+          />
+      )}
                       </>
                   )}
               </div>

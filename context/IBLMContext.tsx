@@ -13,6 +13,7 @@ export interface ContentRecommendation {
   topicCategory: string;
   /** NORMAL | CALMING_ESCAPE | SHORT_BURST for UI to switch mode */
   contentMode: ContentMode;
+  isChallenge: boolean;
 }
 
 interface IBLMContextType {
@@ -24,10 +25,11 @@ interface IBLMContextType {
   setBuffer: React.Dispatch<React.SetStateAction<FeedItem[]>>;
   setTvBuffer: React.Dispatch<React.SetStateAction<LearnVideo[]>>;
   startInteraction: (id: string, type: string) => void;
-  endInteraction: (success: boolean) => void;
-  decideNextContent: () => ContentRecommendation;
+  endInteraction: (success: boolean, topic?: string) => void;
+  decideNextContent: (topic?: string) => ContentRecommendation;
   reportFrustration: (val: number) => void;
   reportCuriosityPreference: (type: IBLMMetrics['curiosityType']) => void;
+  updateMastery: (topic: string, score: number) => void;
   /** Debug HUD: simulate low attention to trigger SHORT_BURST mode */
   simulateLowAttention: () => void;
   resetMetrics: () => void;
@@ -36,19 +38,80 @@ interface IBLMContextType {
 const IBLMContext = createContext<IBLMContextType | undefined>(undefined);
 
 export const IBLMProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [metrics, setMetrics] = useState<IBLMMetrics>({
-    attentionSpan: 5000,
-    frustrationLevel: 0,
-    curiosityType: 'VISUAL',
-    energyLevel: 'CALM',
-    sessionDuration: 0,
-    masteryScore: 10,
+  const [metrics, setMetrics] = useState<IBLMMetrics>(() => {
+    const saved = localStorage.getItem('iblm_mastery');
+    const initialVectors = saved ? JSON.parse(saved) : { shortTerm: [], longTerm: [] };
+    
+    return {
+      attentionSpan: 5000,
+      frustrationLevel: 0,
+      curiosityType: 'VISUAL',
+      energyLevel: 'CALM',
+      sessionDuration: 0,
+      masteryScore: 10,
+      vectors: initialVectors
+    };
   });
 
   const [contentBuffer, setBuffer] = useState<FeedItem[]>([]);
   const [tvBuffer, setTvBuffer] = useState<LearnVideo[]>([]);
   const interactionStart = useRef<number>(0);
   const engineInitialized = useRef(false);
+  const lastActivity = useRef<number>(Date.now());
+  const [isDormant, setIsDormant] = useState(false);
+  const itemsServedCount = useRef<number>(0);
+
+  /** Spec §4.1: Dormant Session Filter (Noise Control) */
+  useEffect(() => {
+    const activityHandler = () => {
+      lastActivity.current = Date.now();
+      if (isDormant) setIsDormant(false);
+    };
+
+    window.addEventListener('mousedown', activityHandler);
+    window.addEventListener('touchstart', activityHandler);
+    window.addEventListener('keydown', activityHandler);
+
+    const interval = setInterval(() => {
+      const idleTime = Date.now() - lastActivity.current;
+      if (idleTime > 60000) {
+          setIsDormant(true);
+          setBuffer([]); // Flush predictive buffer (Spec §4.1)
+          setTvBuffer([]);
+      } else if (idleTime > 30000) {
+          setIsDormant(true);
+      }
+    }, 5000);
+
+    return () => {
+      window.removeEventListener('mousedown', activityHandler);
+      window.removeEventListener('touchstart', activityHandler);
+      window.removeEventListener('keydown', activityHandler);
+      clearInterval(interval);
+    };
+  }, [isDormant]);
+
+  /** Spec §4.2: STV Decay (50% drop every 24h) */
+  useEffect(() => {
+    const decayVectors = () => {
+      setMetrics(prev => {
+        const now = Date.now();
+        const updatedSTV = prev.vectors.shortTerm.map(interest => {
+          const hoursSince = (now - interest.lastInteraction) / (1000 * 60 * 60);
+          const daysSince = hoursSince / 24;
+          // 50% decay per day
+          const newWeight = interest.weight * Math.pow(0.5, daysSince);
+          return { ...interest, weight: newWeight };
+        }).filter(i => i.weight > 0.05); // Cleanup small weights
+
+        return {
+          ...prev,
+          vectors: { ...prev.vectors, shortTerm: updatedSTV }
+        };
+      });
+    };
+    decayVectors();
+  }, []);
 
   /** Spec §3.2: High Frustration → Calming Escape; Low Attention → Short Burst */
   const contentMode: ContentMode = useMemo(() => {
@@ -128,33 +191,85 @@ export const IBLMProvider: React.FC<{ children: React.ReactNode }> = ({ children
     interactionStart.current = Date.now();
   };
 
-  const endInteraction = (success: boolean) => {
+  const endInteraction = (success: boolean, topic?: string) => {
+    if (isDormant) return; // Ignore noisy signals (Spec §4.1)
+    
     const duration = Date.now() - interactionStart.current;
-    setMetrics((prev) => ({
-      ...prev,
-      attentionSpan: Math.round((prev.attentionSpan + duration) / 2),
-      frustrationLevel: !success
-        ? Math.min(10, prev.frustrationLevel + 1)
-        : Math.max(0, prev.frustrationLevel - 1),
-      masteryScore: success ? prev.masteryScore + 1 : prev.masteryScore,
-    }));
+    if (duration < 3000) return; // Ignore accidental taps
+
+    setMetrics((prev) => {
+      let newVectors = { ...prev.vectors };
+
+      if (topic) {
+        // Update STV (Curiosity Spike)
+        const existingIdx = newVectors.shortTerm.findIndex(t => t.topic === topic);
+        if (existingIdx >= 0) {
+          newVectors.shortTerm[existingIdx] = {
+            ...newVectors.shortTerm[existingIdx],
+            weight: Math.min(1, newVectors.shortTerm[existingIdx].weight + 0.1),
+            lastInteraction: Date.now()
+          };
+        } else {
+          newVectors.shortTerm.push({ topic, weight: 0.3, lastInteraction: Date.now() });
+        }
+
+        // Update LMV (Mastery)
+        if (success) {
+          const masteryIdx = newVectors.longTerm.findIndex(t => t.topic === topic);
+          if (masteryIdx >= 0) {
+             const record = newVectors.longTerm[masteryIdx];
+             newVectors.longTerm[masteryIdx] = {
+               ...record,
+               successCount: record.successCount + 1,
+               level: record.successCount > 5 ? Math.min(3, record.level + 1) as 1|2|3 : record.level
+             };
+          } else {
+             newVectors.longTerm.push({ topic, level: 1, successCount: 1, lastQuizScore: 0 });
+          }
+        }
+      }
+
+      // Persist LMV
+      localStorage.setItem('iblm_mastery', JSON.stringify(newVectors));
+
+      return {
+        ...prev,
+        attentionSpan: Math.round((prev.attentionSpan + duration) / 2),
+        frustrationLevel: !success
+          ? Math.min(10, prev.frustrationLevel + 1)
+          : Math.max(0, prev.frustrationLevel - 1),
+        masteryScore: success ? prev.masteryScore + 1 : prev.masteryScore,
+        vectors: newVectors
+      };
+    });
   };
 
-  /** Spec §3.2 + §4: Decide next content from metrics (curiosity, mastery, adaptation mode). */
-  const decideNextContent = (): ContentRecommendation => {
-    const difficulty = metrics.masteryScore > 15 ? 'Intermediate' : 'Basic';
+  /** Spec §4.3: Anti-Echo Chamber Growth Injection (3:1 Rule) */
+  const decideNextContent = (topic?: string): ContentRecommendation => {
+    itemsServedCount.current++;
+    
+    // Find current mastery for topic
+    const mastery = metrics.vectors.longTerm.find(t => t.topic === topic)?.level || 1;
+    
+    // Growth Constraint: Every 4th item is a "Challenge" (Mastery + 1)
+    const isChallenge = itemsServedCount.current % 4 === 0;
+    const difficultyLevel = isChallenge ? Math.min(3, mastery + 1) : mastery;
+
+    const difficultyLabel = difficultyLevel === 1 ? 'Basic' : difficultyLevel === 2 ? 'Intermediate' : 'Advanced';
+
     const topicCategory = metrics.curiosityType === 'VISUAL' ? 'General' : 'Logical';
-    const reason =
-      contentMode === 'CALMING_ESCAPE'
+    const reason = isChallenge 
+      ? 'Growth constraint: introducing a structured challenge'
+      : contentMode === 'CALMING_ESCAPE'
         ? 'Calming activity to reduce frustration'
-        : contentMode === 'SHORT_BURST'
-          ? 'Short burst to match attention span'
-          : 'Curiosity-driven discovery';
+        : 'Curiosity-driven discovery';
+
     return {
       reason,
-      difficulty,
+      difficulty: difficultyLabel,
       topicCategory,
       contentMode,
+      isChallenge
     };
   };
 
@@ -167,6 +282,32 @@ export const IBLMProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const reportCuriosityPreference = (type: IBLMMetrics['curiosityType']) => {
     setMetrics((prev) => ({ ...prev, curiosityType: type }));
+  };
+
+  const updateMastery = (topic: string, score: number) => {
+    setMetrics(prev => {
+        const newVectors = { ...prev.vectors };
+        const idx = newVectors.longTerm.findIndex(t => t.topic === topic);
+        
+        if (idx >= 0) {
+            const record = newVectors.longTerm[idx];
+            // Increase level if score is high (Spec §4.4)
+            const newLevel = score >= 80 ? Math.min(3, record.level + 1) : 
+                             score < 40 ? Math.max(1, record.level - 1) : record.level;
+            
+            newVectors.longTerm[idx] = {
+                ...record,
+                level: newLevel as 1|2|3,
+                lastQuizScore: score,
+                successCount: record.successCount + 1
+            };
+        } else {
+            newVectors.longTerm.push({ topic, level: score >= 80 ? 2 : 1, successCount: 1, lastQuizScore: score });
+        }
+
+        localStorage.setItem('iblm_mastery', JSON.stringify(newVectors));
+        return { ...prev, vectors: newVectors };
+    });
   };
 
   const simulateLowAttention = () => {
@@ -200,6 +341,7 @@ export const IBLMProvider: React.FC<{ children: React.ReactNode }> = ({ children
         reportCuriosityPreference,
         simulateLowAttention,
         resetMetrics,
+        updateMastery
       }}
     >
       {children}

@@ -1,0 +1,15 @@
+# IBLM requirements
+# Zero external dependencies for core functionality
+# Optional dependencies for enhanced features
+
+# No required dependencies - IBLM works with Python standard library only!
+
+# Optional: For testing
+pytest>=7.0.0
+
+# Optional: For enhanced embeddings (uncomment if needed)
+# sentence-transformers>=2.0.0
+# openai>=1.0.0
+
+# Optional: For numpy-accelerated operations (uncomment if needed)
+# numpy>=1.20.0
