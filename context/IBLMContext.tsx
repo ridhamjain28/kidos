@@ -25,8 +25,8 @@ interface IBLMContextType {
   setBuffer: React.Dispatch<React.SetStateAction<FeedItem[]>>;
   setTvBuffer: React.Dispatch<React.SetStateAction<LearnVideo[]>>;
   startInteraction: (id: string, type: string) => void;
-  endInteraction: (success: boolean, topic?: string) => void;
-  decideNextContent: (topic?: string) => ContentRecommendation;
+  endInteraction: (success: boolean, topic?: string, itemId?: string) => void;
+  decideNextContent: (topic?: string, itemId?: string) => ContentRecommendation;
   reportFrustration: (val: number) => void;
   reportCuriosityPreference: (type: IBLMMetrics['curiosityType']) => void;
   updateMastery: (topic: string, score: number) => void;
@@ -40,7 +40,7 @@ const IBLMContext = createContext<IBLMContextType | undefined>(undefined);
 export const IBLMProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [metrics, setMetrics] = useState<IBLMMetrics>(() => {
     const saved = localStorage.getItem('iblm_mastery');
-    const initialVectors = saved ? JSON.parse(saved) : { shortTerm: [], longTerm: [] };
+    const initialVectors = saved ? JSON.parse(saved) : { shortTerm: [], longTerm: [], seenItems: [] };
     
     return {
       attentionSpan: 5000,
@@ -49,7 +49,11 @@ export const IBLMProvider: React.FC<{ children: React.ReactNode }> = ({ children
       energyLevel: 'CALM',
       sessionDuration: 0,
       masteryScore: 10,
-      vectors: initialVectors
+      vectors: {
+        shortTerm: initialVectors.shortTerm || [],
+        longTerm: initialVectors.longTerm || [],
+        seenItems: initialVectors.seenItems || []
+      }
     };
   });
 
@@ -191,14 +195,20 @@ export const IBLMProvider: React.FC<{ children: React.ReactNode }> = ({ children
     interactionStart.current = Date.now();
   };
 
-  const endInteraction = (success: boolean, topic?: string) => {
+  const endInteraction = (success: boolean, topic?: string, itemId?: string) => {
     if (isDormant) return; // Ignore noisy signals (Spec §4.1)
     
     const duration = Date.now() - interactionStart.current;
-    if (duration < 3000) return; // Ignore accidental taps
+    // Engagement Gate: Ignore fast skips (< 5s for videos/books)
+    if (duration < (itemId?.includes('seed') ? 2000 : 5000)) return; 
 
     setMetrics((prev) => {
       let newVectors = { ...prev.vectors };
+
+      // Track Consumed Content
+      if (itemId && !newVectors.seenItems.includes(itemId)) {
+        newVectors.seenItems.push(itemId);
+      }
 
       if (topic) {
         // Update STV (Curiosity Spike)
@@ -245,14 +255,20 @@ export const IBLMProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   /** Spec §4.3: Anti-Echo Chamber Growth Injection (3:1 Rule) */
-  const decideNextContent = (topic?: string): ContentRecommendation => {
+  const decideNextContent = (topic?: string, itemId?: string): ContentRecommendation => {
+    const isFirstVisit = itemId ? !metrics.vectors.seenItems.includes(itemId) : true;
+    
+    // Don't serve challenges on the very first interaction of a new session 
+    // or for items the user has never seen (Build familiarity first)
+    const canChallenge = itemsServedCount.current > 0 && !isFirstVisit;
+
     itemsServedCount.current++;
     
     // Find current mastery for topic
     const mastery = metrics.vectors.longTerm.find(t => t.topic === topic)?.level || 1;
     
     // Growth Constraint: Every 4th item is a "Challenge" (Mastery + 1)
-    const isChallenge = itemsServedCount.current % 4 === 0;
+    const isChallenge = canChallenge && itemsServedCount.current % 4 === 0;
     const difficultyLevel = isChallenge ? Math.min(3, mastery + 1) : mastery;
 
     const difficultyLabel = difficultyLevel === 1 ? 'Basic' : difficultyLevel === 2 ? 'Intermediate' : 'Advanced';

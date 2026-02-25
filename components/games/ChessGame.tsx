@@ -81,7 +81,7 @@ export const ChessGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     return (
         <div className="flex-1 bg-slate-200 p-4 flex flex-col md:flex-row gap-8 items-center justify-center animate-in fade-in h-full">
             <div className="absolute top-4 left-4">
-                <button onClick={() => { endInteraction(true, 'Chess'); onBack(); }} className="px-4 py-2 bg-white rounded-full font-bold shadow-md hover:scale-105 transition-transform text-slate-700">← Back</button>
+                <button onClick={() => { endInteraction(true, 'Chess', 'chess'); onBack(); }} className="px-4 py-2 bg-white rounded-full font-bold shadow-md hover:scale-105 transition-transform text-slate-700">← Back</button>
             </div>
 
             <div className="bg-[#b58863] p-4 rounded-lg shadow-2xl">

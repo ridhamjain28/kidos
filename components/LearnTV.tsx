@@ -153,7 +153,7 @@ export const LearnTV: React.FC = () => {
     
     if (audioUrl) { URL.revokeObjectURL(audioUrl); setAudioUrl(null); }
 
-    const rec = decideNextContent(video.category);
+    const rec = decideNextContent(video.category, video.id);
     setIsChallenge(rec.isChallenge);
     startInteraction(video.id, 'video');
 
@@ -192,7 +192,7 @@ export const LearnTV: React.FC = () => {
     setPlayerState('ENDED'); 
     setShowRecs(true); 
     if (activeVideo) {
-        endInteraction(true, activeVideo.category);
+        endInteraction(true, activeVideo.category, activeVideo.id);
         if (isChallenge) setShowQuizFor(activeVideo.category);
         loadRecommendations(activeVideo.title); 
     }

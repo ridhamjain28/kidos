@@ -258,14 +258,14 @@ export const Feed: React.FC = () => {
                         <div 
                             key={item.id} 
                             onMouseEnter={() => {
-                                const rec = decideNextContent(item.topic);
+                                const rec = decideNextContent(item.topic, item.id);
                                 if (rec.isChallenge) {
                                     setActiveChallenge(prev => ({ ...prev, [item.id]: true }));
                                 }
                                 startInteraction(item.id, 'fact');
                             }}
                             onMouseLeave={() => {
-                                endInteraction(true, item.topic);
+                                endInteraction(true, item.topic, item.id);
                                 if (activeChallenge[item.id]) {
                                     setShowQuizFor(item.topic);
                                     setActiveChallenge(prev => {

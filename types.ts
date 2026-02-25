@@ -93,6 +93,8 @@ export interface MasteryRecord {
 export interface BehavioralVector {
   shortTerm: TopicalInterest[];
   longTerm: MasteryRecord[];
+  /** Set of item IDs (books/facts) that have been fully consumed */
+  seenItems: string[];
 }
 
 export interface IBLMMetrics {
