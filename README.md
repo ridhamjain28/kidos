@@ -1,64 +1,84 @@
-# KidOS – WonderFeed
+# KidOS Agentic AI – MVP
 
-A **kid-safe, AI-powered learning website** for children (ages 2–7): discovery feed, stories, LearnTV, creative games, and **Professor Hoot** – all with optional behavior-based adaptation (IBLM).
+> **Edge-Native, Agentic AI learning system for children (ages 5-12)**
 
-![KidOS WonderFeed](wondernest.jpg)
+Privacy-first, local-only adaptive learning powered by 4 specialized AI agents and Ollama.
 
-## What it does
+## Quick Start
 
-- **Home / Feed** – Daily facts cards and a story library (AI-generated books with illustrations).
-- **LearnTV** – Short educational “shows”: pick a topic, get a script + images + voiceover that plays in sync.
-- **Games** – Magic Paint (AI describes your drawing), Safari Speech (pronunciation), Memory Zoo (card matching).
-- **Ask Hoot** – Chat with Professor Hoot; short, simple answers and optional images.
-- **Parents** – PIN-gated area: fact checker (search-grounded summaries) and activity insights.
-- **IBLM** – Optional adaptation: calming mode when frustration is high, short-burst content when attention is low (debug HUD: `?iblm=1`).
-
-## Tech
-
-- **React 19**, **Vite**, **Tailwind CSS**
-- **Google Gemini** (text, image, TTS, optional search grounding)
-- **Local-first** – Child/parent data in browser storage unless you add sync
-
-## Run locally
-
-**Prerequisites:** Node.js (e.g. 18+).
+### Backend (Python)
 
 ```bash
-git clone https://github.com/ridhamjain28/kidos.git
-cd kidos
+cd kidOS_mvp
+pip install -r requirements.txt
+cp .env.example .env
+python -m backend.main
+# → http://localhost:8000/docs
+```
+
+### Frontend (React Native)
+
+```bash
+cd kidOS_mvp/frontend
 npm install
+npx expo start
 ```
 
-1. **API key (optional)** – Create `.env.local` and set `GEMINI_API_KEY=your_key` for AI features.
-2. **Intro video** – Keep `WonderNest.mp4` in the project root; `npm run dev` copies it to `public/` and it’s used as the welcome intro (with a Skip button).
-3. **Run the site:**
-   ```bash
-   npm run dev
-   ```
-   Open **http://localhost:3000** in your browser.
-
-## Build for production
+### Ollama (Local LLM)
 
 ```bash
-npm run build
-npm run preview
+# Install from https://ollama.com
+ollama pull llama3.2:3b
+ollama serve
 ```
 
-Use the `dist/` output with any static host (e.g. Vercel, Netlify, GitHub Pages).
+## Architecture
 
-## Deploy as a website
+```
+┌────────────────────────────────────────────────────────────────┐
+│                    KIDOS AGENTIC SYSTEM                        │
+├────────────────────────────────────────────────────────────────┤
+│                                                                │
+│  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐   │
+│  │   Observer    │────▶│ Orchestrator │────▶│  Specialist  │   │
+│  │    Agent      │     │    Agent     │     │    Agents    │   │
+│  └──────────────┘     └──────────────┘     └──────────────┘   │
+│         │                    │                    │            │
+│         ▼                    ▼                    ▼            │
+│  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐   │
+│  │  Engagement   │     │   Routing    │     │  Teaching /  │   │
+│  │  Tracker      │     │   Logic     │     │  Recommender │   │
+│  └──────────────┘     └──────────────┘     └──────────────┘   │
+│                                                                │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │           SQLite + ChromaDB (Child Profile)             │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘
+```
 
-- Build: `npm run build`
-- Serve the `dist` folder from your host’s root (or set the host’s “public directory” to `dist`).
-- Ensure routes fall back to `index.html` (SPA) if you use client-side routing later.
+## API Endpoints
 
-The app is set up as a proper website: meta tags, theme color, Open Graph, favicon, and a web app manifest for “Add to Home Screen” and sharing.
+> [!IMPORTANT]
+> When testing on a physical mobile device or Android emulator, replace `localhost` in `kidOS_mvp/frontend/services/api.ts` with your computer's local network IP (e.g., `192.168.1.x`).
 
-## Repository
+| Method | Endpoint                | Purpose                                           |
+| ------ | ----------------------- | ------------------------------------------------- |
+| POST   | `/api/v1/telemetry`     | Send interaction data → get engagement assessment |
+| POST   | `/api/v1/generate`      | Generate lesson (SSE streaming)                   |
+| POST   | `/api/v1/recommend`     | Get next content recommendation                   |
+| POST   | `/api/v1/session/start` | Initialize learning session                       |
+| POST   | `/api/v1/session/end`   | Close session & save progress                     |
 
-- **GitHub:** [ridhamjain28/kidos](https://github.com/ridhamjain28/kidos)
-- **AI Studio:** [View app in AI Studio](https://ai.studio/apps/drive/1MoVAPk6BDgtcZMl1E2jJlcQEx-VCgcMx)
+## Tech Stack
 
-## License
+- **Backend:** FastAPI, Python 3.10+, Ollama, ChromaDB, SQLite
+- **Frontend:** React Native (Expo), Zustand, TypeScript
+- **LLM:** Llama 3.2-3B (local via Ollama)
 
-Private / unlicensed unless otherwise specified.
+## Tests
+
+```bash
+cd kidOS_mvp
+python -m pytest tests/ -v
+```
